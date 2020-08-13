@@ -1,0 +1,48 @@
+nombre: java;
+autor: sun Microsystems;
+lanzamiento: 199Q6; /* Significa que cuando se encuentre este token deberá ser ignorado */
+extension: java;
+
+
+%% 
+
+List<String> listString=new ArrayList<>();
+
+public void addString(String valor){
+         listString.add(valor); 
+}
+
+public Integer suma(Integer numero1,Integer numero2){
+          return numero1+numero2; 
+}
+
+
+%%
+/* Significa que cuando se encuentre este token deberá ser ignorado */
+
+sss = [a-z]+;
+sasdasdSb = [0-9]+;
+reals = [0-9]+((".")[0-9]+)?;
+mas = "+";
+menos = "-";
+& = [\n\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */
+
+%% 
+
+terminal por, div; /* Significa que cuando se encuentre este token deberá ser ignorado */
+terminal mas, menos;
+terminal enterdo; /* Significa que cuando se encuentre este token deberá ser ignorado */
+
+no terminal A, B;
+no terminal S;  /* Significa que cuando se encuentre este token deberá ser ignorado */
+
+%%
+
+S :: E:val;
+E :: E:val mSenos32 E:val2;
+E :: E:val mas E:val2;
+E :: E:val por E:val2; /* Significa que cuando se encuentre este token deberá ser ignorado */
+E :: E:val div E:val2;
+E :: enterdo:val;
+
+%%

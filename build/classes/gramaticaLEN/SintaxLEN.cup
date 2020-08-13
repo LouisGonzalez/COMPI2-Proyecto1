@@ -1,0 +1,228 @@
+package gramaticaLEN;
+import java_cup.runtime.*;
+import java.util.*;
+import pollitos.*;
+import java.util.regex.Pattern;
+
+parser code {:
+    
+    public ArrayList<MisExpresiones> listExpresiones;
+    
+    
+    public SintaxLEN(AnalizadorLexico lex, ArrayList<MisExpresiones> listExpresiones){
+        super(lex);
+        this.listExpresiones = listExpresiones;
+    }
+
+    public void setAccion(String tipo, String mensaje, String accion){
+        System.out.println(tipo + " " + mensaje);
+    }
+
+    public void syntax_error(Symbol s){
+        setAccion("ERROR", "Error sintaxis columna: "+s.right+" fila: "+s.left,"");
+    }
+:}
+
+    terminal coma, nombre, version, autor, lanzamiento, extension, dos_puntos, punto_coma, separador, agrupacion_a,
+             agrupacion_b, interrogacion, por, mas, comillas, parentesis_a, parentesis_b, guion, enter, tab, espacio,
+             comentario, comentario_a, comentario_b, terminal1, noTerminal, tipoEntero, tipoReal, tipoCadena, cadena,
+             numero, id, igual, letra, o, llave_a, llave_b, idMin, idMay, punto, caracter, resto, soloLetra, ampersand,
+             diagonal;
+
+    non terminal A, A1, A11, A2, A4, A41, TIPO, A411, A42, A421, A5, A51, SIMBOLO,
+                 A52, A53, LETRA, LETRA2, CADENA, CADENA2, COM, COM2;
+
+    non terminal String SIMBOLOS, SIMBOLOS2, CODIGO, CODIGO2;
+
+    non terminal String A3, A31, A311, A32, A33, A34, A35;
+
+    non terminal String TIPO_LETRA;
+
+    start with A;
+
+    A ::= A1 separador A2 separador A3 separador A4 separador A5 separador
+;
+    A1 ::= A11
+;
+    A11 ::= nombre dos_puntos LETRA punto_coma A11
+    |       version dos_puntos LETRA punto_coma A11
+    |       autor dos_puntos CADENA punto_coma A11
+    |       lanzamiento dos_puntos numero punto_coma A11
+    |       extension dos_puntos LETRA punto_coma A11
+    |       COM A11
+    |       error A11
+    |       
+;
+    A2 ::= CODIGO:a {: System.out.println(a.toString()); :}
+;
+    A3 ::= soloLetra:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){ parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()))); }  :} A35  
+    |      idMin:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){ parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()))); }  :}A35  
+    |      idMay:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){ parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()))); } :} A35 
+    |      ampersand:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){ parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString())));} :} A35 
+    |      COM A35 
+    |      error A35
+;
+    A35 ::= soloLetra:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString())));}:} A35 
+    |       idMin:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString())));} :} A35 
+    |       idMay:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){ parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString())));} :} A35 
+    |       ampersand:b igual A31:a punto_coma {: System.out.println(a.toString()); if(a.length()>1){parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString())));} :} A35 
+    |       COM A35
+    |       error A35
+    |
+;
+    A31 ::= parentesis_a:a A31:b parentesis_b:c A33:d {: RESULT=a.toString()+b.toString()+c.toString()+d.toString(); :}
+    |        A32:a A33:b {: RESULT=a.toString()+b.toString(); :}
+;
+    A32 ::= agrupacion_a:a numero:b guion:c numero:d agrupacion_b:e {:  if(b.toString().length()==1 && d.toString().length()==1){ String cadena = a.toString()+b.toString()+c.toString()+d.toString()+e.toString(); RESULT=cadena; }  :}
+    |       agrupacion_a:a TIPO_LETRA:b guion:c TIPO_LETRA:d agrupacion_b:e {: if(b.toString().length()==1 && d.toString().length()==1){ String cadena = a.toString()+b.toString()+c.toString()+d.toString()+e.toString(); RESULT=cadena; } :}
+    |       agrupacion_a:a A34:b agrupacion_b:c {: RESULT=a.toString()+b.toString()+c.toString(); :}
+    |       comillas SIMBOLOS:a comillas {: RESULT=a.toString(); :}                                                             
+;
+    TIPO_LETRA ::= idMin:a {: RESULT=a.toString(); :}
+    |              idMay:a {: RESULT=a.toString(); :}
+;
+    A33 ::= o:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       interrogacion:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       por:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       mas:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       A31:a {: String cadena = a.toString(); RESULT=cadena; :}
+    |       {: RESULT=""; :} 
+;
+    A311 ::= A31:a {: RESULT=a.toString(); :}
+    |   {: RESULT=""; :}
+;
+    A34 ::= enter:a A34:b {: RESULT=a.toString()+b.toString(); :}
+    |        tab:a A34:b {: RESULT=a.toString()+b.toString(); :}
+    |        espacio:a A34:b {: RESULT=a.toString()+b.toString(); :}
+    |        {: RESULT=""; :}
+;
+    A4 ::= COM2 A41 A42
+;
+    A41 ::= terminal1 TIPO idMin A411 punto_coma COM2 A41
+    |       
+;
+    TIPO ::= tipoEntero
+    |        tipoReal
+    |        tipoCadena
+    |   
+;
+    A411 ::= coma idMin A411
+    |
+;
+    A42 ::= noTerminal TIPO idMay A421 punto_coma COM2 A42
+    |     
+;
+    A421 ::= coma idMay A421
+    | 
+;
+    A5 ::= idMay dos_puntos dos_puntos A51 A53 punto_coma A5 
+    |      idMay dos_puntos dos_puntos punto_coma A5
+    |      COM A5
+    |      error:a A5 
+    |
+;
+    A51 ::= soloLetra SIMBOLO A52
+    |       idMin SIMBOLO A52
+    |       idMay SIMBOLO A52
+;
+    SIMBOLO ::= dos_puntos soloLetra
+    |           dos_puntos idMin
+    |           dos_puntos idMay
+    |
+;
+    A52 ::= soloLetra SIMBOLO A52
+    |       idMin SIMBOLO A52
+    |       idMay SIMBOLO A52
+    |
+;
+    A53 ::= llave_a {: /*PENDIENTE*/ :} llave_b
+    |
+;
+    LETRA ::= LETRA2 idMin 
+    |         LETRA2 idMay 
+    |
+;
+    LETRA2 ::= LETRA2 idMin 
+    |          LETRA2 idMay
+    |          
+;
+    CODIGO ::= CODIGO:a resto:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          CODIGO:a CODIGO2:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          CODIGO:a soloLetra:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          CODIGO:a idMin:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          CODIGO:a idMay:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          CODIGO:a numero:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          CODIGO:a COM
+    |          resto:a {: RESULT=a.toString(); :}
+    |          CODIGO2:a {: RESULT=a.toString(); :}
+    |          numero:a {: RESULT=a.toString(); :}
+    |          soloLetra:a {: RESULT=a.toString(); :}
+    |          idMin:a {: RESULT=a.toString(); :}
+    |          idMay:a {: RESULT=a.toString(); :}
+    |          COM
+;
+    CODIGO2 ::= dos_puntos:a {: RESULT=a.toString(); :}
+    |           punto:a {: RESULT=a.toString(); :}
+    |           punto_coma:a {: RESULT=a.toString()+"\n"; :}
+    |           agrupacion_a:a {: RESULT=a.toString(); :}
+    |           agrupacion_b:a {: RESULT=a.toString(); :}
+    |           interrogacion:a {: RESULT=a.toString(); :}
+    |           por:a {: RESULT=a.toString(); :}
+    |           mas:a {: RESULT=a.toString(); :}
+    |           coma:a {: RESULT=a.toString(); :}
+    |           parentesis_a:a {: RESULT=a.toString(); :}
+    |           parentesis_b:a {: RESULT=a.toString(); :}
+    |           llave_a:a {: RESULT=a.toString()+"\n"; :}
+    |           llave_b:a {: RESULT=a.toString()+"\n"; :}
+    |           guion:a {: RESULT=a.toString(); :}
+    |           igual:a {: RESULT=a.toString(); :}
+    |           diagonal:a {: RESULT=a.toString(); :}
+    |           o:a {: RESULT=a.toString(); :}
+    |           ampersand:a {: RESULT=a.toString(); :}
+;
+    SIMBOLOS ::= SIMBOLOS:a resto:b {: RESULT=a.toString()+b.toString(); :}
+    |            SIMBOLOS:a SIMBOLOS2:b {: RESULT=a.toString()+b.toString(); :}
+    |            SIMBOLOS:a soloLetra:b {: RESULT=a.toString()+b.toString(); :}
+    |            SIMBOLOS:a idMin:b {: RESULT=a.toString()+b.toString(); :}
+    |            SIMBOLOS:a idMay:b {: RESULT=a.toString()+b.toString(); :}
+    |            SIMBOLOS:a numero:b {: RESULT=a.toString()+b.toString(); :}
+    |            resto:a {: RESULT=a.toString(); :}
+    |            SIMBOLOS2:a {: RESULT=a.toString(); :}
+    |            soloLetra:a {: RESULT=a.toString(); :}
+    |            idMin:a {: RESULT=a.toString(); :}
+    |            idMay:a {: RESULT=a.toString(); :}
+;
+    SIMBOLOS2 ::= dos_puntos:a {: RESULT=a.toString(); :}
+    |             punto:a {: RESULT=a.toString(); :}
+    |             punto_coma:a {: RESULT=a.toString(); :}
+    |             agrupacion_a:a {: RESULT=a.toString(); :}
+    |             agrupacion_b:a {: RESULT=a.toString(); :}
+    |             interrogacion:a {: RESULT=a.toString(); :}
+    |             por:a {: RESULT=a.toString(); :}
+    |             mas:a {: RESULT=a.toString(); :}
+    |             coma:a {: RESULT=a.toString(); :}
+    |             parentesis_a:a {: RESULT=a.toString(); :}
+    |             parentesis_b:a {: RESULT=a.toString(); :}
+    |             llave_a:a {: RESULT=a.toString(); :}
+    |             llave_b:a {: RESULT=a.toString(); :}
+    |             guion:a {: RESULT=a.toString(); :}
+    |             igual:a {: RESULT=a.toString(); :}
+    |             diagonal:a {: RESULT=a.toString(); :}
+    |             o:a {: RESULT=a.toString(); :}
+    |             ampersand:a {: RESULT=a.toString(); :}
+;
+
+    CADENA ::= CADENA2 soloLetra 
+    |          CADENA2 idMin 
+    |          CADENA2 idMay 
+;  
+    CADENA2 ::= CADENA2 soloLetra 
+    |           CADENA2 idMin 
+    |           CADENA2 idMay 
+    | 
+;
+    COM ::= comentario_a CODIGO comentario_b
+;
+    COM2 ::= comentario_a CODIGO comentario_b
+    |
+;
