@@ -5,6 +5,8 @@
  */
 package interfaz;
 
+import LALR.Estados;
+import LALR.NodoCaso;
 import hojas.NuevaHoja;
 import java.io.*;
 import java.util.ArrayList;
@@ -20,7 +22,12 @@ public class Inicio extends javax.swing.JFrame {
 
     private MisExpresiones expresion;
     
+    //Estos arraylist lo mas probable es que sean temporales (BORRADOS CON EL TIEMPO)
     private ArrayList<MisExpresiones> listExpresion = new ArrayList<>();
+    private ArrayList<Estados> listEstados = new ArrayList<>();
+    private ArrayList<NodoCaso> listCasos = new ArrayList<>();
+     
+    
     
     private NuevaHoja nueva = new NuevaHoja();
     String a = "\\n";
@@ -156,12 +163,12 @@ public class Inicio extends javax.swing.JFrame {
             FileReader reader = null;
             BufferedReader buffer = null;
             String texto = "";
-            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, listExpresion);
+            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, listExpresion, listEstados, listCasos);
         }
     }//GEN-LAST:event_menuAbrirActionPerformed
 
     private void menuNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNuevoActionPerformed
-        PanelHojas panel = new PanelHojas("", "", listExpresion);
+        PanelHojas panel = new PanelHojas("", "", listExpresion, listEstados, listCasos);
         tabbed.addTab("Sin nombre", panel);
         tabbed.setTabComponentAt(tabbed.getTabCount() - 1, nueva.crearCabecera("Sin nombre", tabbed));
     }//GEN-LAST:event_menuNuevoActionPerformed

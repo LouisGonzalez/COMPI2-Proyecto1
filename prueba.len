@@ -1,6 +1,6 @@
-nombre: java;
+nombre: javaMicro44Sistemsperro;
 autor: sun Microsystems;
-lanzamiento: 199Q6; /* Significa que cuando se encuentre este token deberá ser ignorado */
+lanzamiento: 1996; /* Significa que cuando se encuentre este token deberá ser ignorado */
 extension: java;
 
 
@@ -8,9 +8,15 @@ extension: java;
 
 List<String> listString=new ArrayList<>();
 
+public static void prueba(){
+	System.out.println("sasdfdasdfsdfsdfsdfsdddddddd");
+	
+}
+
 public void addString(String valor){
          listString.add(valor); 
 }
+
 
 public Integer suma(Integer numero1,Integer numero2){
           return numero1+numero2; 
@@ -33,13 +39,13 @@ terminal por, div; /* Significa que cuando se encuentre este token deberá ser i
 terminal mas, menos;
 terminal enterdo; /* Significa que cuando se encuentre este token deberá ser ignorado */
 
-no terminal A, B;
+no terminal A, S;
 no terminal S;  /* Significa que cuando se encuentre este token deberá ser ignorado */
 
 %%
 
 S :: E:val;
-E :: E:val mSenos32 E:val2;
+E :: E:val menos E:val2;
 E :: E:val mas E:val2;
 E :: E:val por E:val2; /* Significa que cuando se encuentre este token deberá ser ignorado */
 E :: E:val div E:val2;

@@ -46,7 +46,7 @@ Espacio = {Salto} | {Espacio1}
     "?"                                                             {return symbol(sym.interrogacion, new String(yytext()));}
     "*"                                                             {return symbol(sym.por, new String(yytext()));}
     "+"                                                             {return symbol(sym.mas, new String(yytext()));}
-    "\""                                                            {return symbol(sym.comillas);}
+    "\""                                                            {return symbol(sym.comillas, new String(yytext()));}
     "("                                                             {return symbol(sym.parentesis_a, new String(yytext()));}
     ")"                                                             {return symbol(sym.parentesis_b, new String(yytext()));}
     "{"                                                             {return symbol(sym.llave_a, new String(yytext()));}

@@ -781,7 +781,7 @@ public class AnalizadorLexico implements java_cup.runtime.Scanner {
             }
           case 57: break;
           case 15: 
-            { return symbol(sym.comillas);
+            { return symbol(sym.comillas, new String(yytext()));
             }
           case 58: break;
           case 16: 

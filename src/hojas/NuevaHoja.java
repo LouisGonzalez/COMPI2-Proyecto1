@@ -5,6 +5,8 @@
  */
 package hojas;
 
+import LALR.Estados;
+import LALR.NodoCaso;
 import interfaz.PanelHojas;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,14 +31,14 @@ import pollitos.MisExpresiones;
  */
 public class NuevaHoja {
     
-    public void crearHoja(File archivo, FileReader reader, BufferedReader buffer, String texto, JTabbedPane principal, ArrayList<MisExpresiones> listExpresiones){
+    public void crearHoja(File archivo, FileReader reader, BufferedReader buffer, String texto, JTabbedPane principal, ArrayList<MisExpresiones> listExpresiones, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos){
         try {
             reader = new FileReader(archivo.toString());
             buffer = new BufferedReader(reader);
             while(buffer.ready()){
                 texto += buffer.readLine() + "\n";
             }
-            abrirPanel(texto, archivo.getPath(), archivo.getName(), principal, listExpresiones);
+            abrirPanel(texto, archivo.getPath(), archivo.getName(), principal, listExpresiones, listEstados, listCasos);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NuevaHoja.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -44,8 +46,8 @@ public class NuevaHoja {
         }
     }
     
-    public void abrirPanel(String texto, String path, String titulo, JTabbedPane principal, ArrayList<MisExpresiones> listExpresiones){
-        PanelHojas panel = new PanelHojas(texto, path, listExpresiones);
+    public void abrirPanel(String texto, String path, String titulo, JTabbedPane principal, ArrayList<MisExpresiones> listExpresiones, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos){
+        PanelHojas panel = new PanelHojas(texto, path, listExpresiones, listEstados, listCasos);
         principal.addTab(titulo, panel);
         principal.setTabComponentAt(principal.getTabCount() - 1, crearCabecera(titulo, principal));
     }

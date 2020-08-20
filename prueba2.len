@@ -1,0 +1,62 @@
+nombre: javaMicro44Sistemsperro;
+autor: sun Microsystems;
+lanzamiento: 1996; /* Significa que cuando se encuentre este token deberá ser ignorado */
+extension: java;
+
+
+%% 
+
+List<String> listString=new ArrayList<>();
+
+public static void prueba(){
+	System.out.println("sasdfdasdfsdfsdfsdfsdddddddd");
+	
+}
+
+public void addString(String valor){
+         listString.add(valor); 
+}
+
+
+public Integer suma(Integer numero1,Integer numero2){
+          return numero1+numero2; 
+}
+
+
+%%
+/* Significa que cuando se encuentre este token deberá ser ignorado */
+
+ida = [a-z]+;
+num = [0-9]+;
+reals = [0-9]+((".")[0-9]+)?;
+mas = "+";
+menos = "-";
+parentesis = "(";
+parentesisb = ")";
+por = "*";
+
+& = [\n\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */
+
+%% 
+
+terminal por; /* Significa que cuando se encuentre este token deberá ser ignorado */
+terminal mas, menos;
+terminal enterdo; /* Significa que cuando se encuentre este token deberá ser ignorado */
+terminal ida, num, parentesis, parentesisb;
+
+no terminal E, T, TP, EP;
+no terminal F;  /* Significa que cuando se encuentre este token deberá ser ignorado */
+
+%%
+
+E :: T EP;
+EP :: mas T EP;
+EP ::  ;
+T :: F TP;
+TP :: por F TP;
+TP ::  ;
+F :: ida;
+F :: num;
+F :: parentesis E parentesisb;
+
+%%

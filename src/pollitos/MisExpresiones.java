@@ -12,13 +12,23 @@ import java.util.regex.Pattern;
  * @author luisGonzalez
  */
 public class MisExpresiones {
-    
+
     private String identificador;
     private Pattern expresion;
+    private String caracteres;
 
-    public MisExpresiones(String identificador, Pattern expresion) {
+    public MisExpresiones(String identificador, Pattern expresion, String caracteres) {
         this.identificador = identificador;
         this.expresion = expresion;
+        this.caracteres = caracteres;
+    }
+
+    public String getCaracteres() {
+        return caracteres;
+    }
+
+    public void setCaracteres(String caracteres) {
+        this.caracteres = caracteres;
     }
 
     public String getIdentificador() {
@@ -36,6 +46,5 @@ public class MisExpresiones {
     public void setExpresion(Pattern expresion) {
         this.expresion = expresion;
     }
-    
-    
+
 }
