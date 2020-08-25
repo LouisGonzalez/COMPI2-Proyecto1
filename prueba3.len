@@ -29,11 +29,11 @@ public Integer suma(Integer numero1,Integer numero2){
 ida = [a-z]+;
 num = [0-9]+;
 reals = [0-9]+((".")[0-9]+)?;
-igual = "=";
 letrax = "x";
+igual = "=";
 por = "*";
+hola = "hola";
 
-& = [\n\t]; /* Significa que cuando se encuentre este token deberá ser ignorado */
 
 %% 
 

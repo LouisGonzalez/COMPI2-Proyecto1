@@ -5,24 +5,24 @@
         <group>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/Simbolos.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Estados.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Automata/Transiciones.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/seccion_2/CreacionClases.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/DatosLenguaje.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/gramaticaLEN/LexerLEN.flex</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/NodoCaso.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/seccion_4/Verificaciones.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Arbol/Nodo.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Arbol/NodoArbol.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Automata/GeneracionEstados.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/interfaz/PanelHojas.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/MisExpresiones.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Transiciones.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/ArregloExpresiones.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Expresiones.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Automata/Arbol.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/seccion_2/RuntimeCompiler.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/GeneracionTabla.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/gramaticaLEN/SintaxLEN.cup</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Vinculos.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Primeros.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Arbol/Raiz.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Arbol/GeneracionArbol.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/seccion_5/Verificaciones2.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/principal/main.java</file>
         </group>
     </open-files>
 </project-private>

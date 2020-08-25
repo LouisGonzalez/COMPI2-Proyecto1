@@ -56,7 +56,7 @@ public class Primeros {
     }
     
     public void retornoPrimeros(ArrayList<Carril> listCarril, Expresiones actual){
-        if(actual.getMiExpresion() == null){
+        if(actual.getExpresion()== null){
        //     System.out.println(actual.getIdentificador());
        //     System.out.println("-------------");
             listCarril.add(new Carril(actual.getIdentificador(), actual.getMisCaracteres()));

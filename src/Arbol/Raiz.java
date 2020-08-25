@@ -11,7 +11,7 @@ package Arbol;
  */
 public class Raiz {
     
-    public void agregar(Nodo aInsertar, Nodo nodo){
+/*    public void agregar(Nodo aInsertar, Nodo nodo){
         if(aInsertar.getId() < nodo.getId()){
             if(nodo.getHijoIzquierdo()!= null){
                 nodo.setHijoIzquierdo(aInsertar);
@@ -27,9 +27,8 @@ public class Raiz {
                 agregar(aInsertar, nodo.getHijoDerecho());
             }
         }
-    }
+    }*/
     
-    
-    
+
     
 }

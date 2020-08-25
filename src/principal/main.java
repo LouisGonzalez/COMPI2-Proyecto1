@@ -19,7 +19,7 @@ public class main {
 
     CreacionClases clase = new CreacionClases();
     static GeneracionTabla tabla = new GeneracionTabla();
-    
+   
     public static void main(String[] args) throws Exception {
         Inicio inicio = new Inicio();
         inicio.setVisible(true);
@@ -38,7 +38,6 @@ public class main {
             + "}";
           
           CreacionClases.pruebaJanino2(codigo);
-        
         
     }
     

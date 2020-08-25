@@ -5,6 +5,7 @@
  */
 package LALR;
 
+import Arbol.NodoArbol;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -16,29 +17,35 @@ public class Expresiones {
     
     private String identificador;
     private Boolean esTerminal;
-    private Pattern miExpresion;
     private String misCaracteres;
     private Boolean punto = null;
     private Boolean puntoFinal = false;
+    private NodoArbol expresion;
 
     
     public Expresiones(Expresiones exp){
         identificador = exp.identificador;
         esTerminal = exp.esTerminal;
-        miExpresion = exp.miExpresion;
         misCaracteres = exp.misCaracteres;
         punto = exp.punto;
         puntoFinal = exp.puntoFinal;
+        expresion = exp.expresion;
     }
     
-    public Expresiones(String identificador, Boolean esTerminal, Pattern miExpresion, String misCaracteres) {
+    public Expresiones(String identificador, Boolean esTerminal, NodoArbol expresion, String misCaracteres) {
         this.identificador = identificador;
         this.esTerminal = esTerminal;
-        this.miExpresion = miExpresion;
         this.misCaracteres = misCaracteres;
+        this.expresion = expresion;
     }
 
-    
+    public NodoArbol getExpresion() {
+        return expresion;
+    }
+
+    public void setExpresion(NodoArbol expresion) {
+        this.expresion = expresion;
+    }
 
     public Boolean getPuntoFinal() {
         return puntoFinal;
@@ -88,13 +95,6 @@ public class Expresiones {
         this.esTerminal = esTerminal;
     }
 
-    public Pattern getMiExpresion() {
-        return miExpresion;
-    }
-
-    public void setMiExpresion(Pattern miExpresion) {
-        this.miExpresion = miExpresion;
-    }
     
     
     

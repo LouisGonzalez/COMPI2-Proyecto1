@@ -1,0 +1,52 @@
+    A3 ::= soloLetra:b igual A31:a punto_coma A35:c {:  if(a.length()>1){ c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));             parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), "")); } else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c;  :} 
+    |      idMin:b igual A31:a punto_coma A35:c {: if(a.length()>1){ c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));        parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), "")); } else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c;  :}
+    |      idMay:b igual A31:a punto_coma A35:c {:  if(a.length()>1){ c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));           parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), "")); } else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c;  :}  
+    |      ampersand:b igual A31:a punto_coma A35:c {:if(a.length()>1){ c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));                     parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));} else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c;  :}  
+    |      COM A35:a {: RESULT=a; :} 
+    |      error A35:a {: RESULT=a; :}
+;
+    A35 ::= soloLetra:b igual A31:a punto_coma A35:c {:  if(a.length()>1){ c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));              parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));}  else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c;  :} 
+    |       idMin:b igual A31:a punto_coma A35:c {:  if(a.length()>1){ c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));              parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));} else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c;  :} 
+    |       idMay:b igual A31:a punto_coma A35:c {: if(a.length()>1){ c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));            parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));} else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c; :} 
+    |       ampersand:b igual A31:a punto_coma A35:c {: if(a.length()>1){  c.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));         parser.listExpresiones.add(new MisExpresiones(b.toString(), Pattern.compile(a.toString()), ""));} else { c.add(new MisExpresiones(b.toString(), null, a.toString())); } RESULT=c; :} 
+    |       COM A35:a {: RESULT=a; :}
+    |       error A35:a {: RESULT=a; :}
+    |       {: RESULT=new ArrayList<>(); :}
+;
+    A31 ::= parentesis_a:a A31:b parentesis_b:c A33:d {: RESULT=a.toString()+b.toString()+c.toString()+d.toString(); :}
+    |        A32:a A33:b {: RESULT=a.toString()+b.toString(); :}
+;
+    A32 ::= agrupacion_a:a numero:b guion:c numero:d agrupacion_b:e {:  if(b.toString().length()==1 && d.toString().length()==1){ String cadena = a.toString()+b.toString()+c.toString()+d.toString()+e.toString(); RESULT=cadena; }  :}
+    |       agrupacion_a:a TIPO_LETRA:b guion:c TIPO_LETRA:d agrupacion_b:e {: if(b.toString().length()==1 && d.toString().length()==1){ String cadena = a.toString()+b.toString()+c.toString()+d.toString()+e.toString(); RESULT=cadena; } :}
+    |       agrupacion_a:a A34:b agrupacion_b:c {: RESULT=a.toString()+b.toString()+c.toString(); :}
+    |       comillas SIMBOLOS:a comillas {: RESULT=a.toString(); :}                                                             
+;
+    TIPO_LETRA ::= idMin:a {: RESULT=a.toString(); :}
+    |              idMay:a {: RESULT=a.toString(); :}
+;
+    A33 ::= o:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       interrogacion:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       por:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       mas:a A311:b {: String cadena = a.toString()+b.toString(); RESULT=cadena; :}
+    |       A31:a {: String cadena = a.toString(); RESULT=cadena; :}
+    |       {: RESULT=""; :} 
+;
+    A311 ::= A31:a {: RESULT=a.toString(); :}
+    |   {: RESULT=""; :}
+;
+    A34 ::= enter:a A34:b {: RESULT=a.toString()+b.toString(); :}
+    |        tab:a A34:b {: RESULT=a.toString()+b.toString(); :}
+    |        espacio:a A34:b {: RESULT=a.toString()+b.toString(); :}
+    |        {: RESULT=""; :}
+;
+
+
+
+
+    A33 ::= o:a A311:b {: :}
+    |       interrogacion:a A311:b {::}
+    |       por:a A311:b {::}
+    |       mas:a A311:b {::}
+    |       A31:a {::}
+    |       
+;
