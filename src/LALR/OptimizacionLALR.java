@@ -71,37 +71,46 @@ public class OptimizacionLALR {
     //verifica si dentro de la tabla LR(1) no habria conflicto al simplificar dos o mas estados.
     public void verificarNodosTabla(ArrayList<NodoCaso> listCasos, NodoTabla[][] tabla, ArrayList<NodoSimplificado> simplificados, ArrayList<Simbolos> listSimbolos) {
         for (int i = 0; i < simplificados.size(); i++) {
-            if (simplificados.get(i).getListUniones().size() > 1) {
+            if (simplificados.get(i).getListUniones().size() > 2) {
                 for (int j = 1; j < simplificados.get(i).getListUniones().size(); j++) {
                     if (tabla[simplificados.get(i).getListUniones().get(0)][0].isFilaActiva() && tabla[simplificados.get(i).getListUniones().get(j)][0].isFilaActiva()) {
-                        if (!comparacionFilas(tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(j), listSimbolos, listCasos, simplificados)) {
+                        if (!comparacionFilas(i, tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(j), listSimbolos, listCasos, simplificados, true)) {
                             break;
                         }
                     }
                 }
             } else {
+                System.out.println("NUEVA ITERACION DDENTRO DEL CILCO------------------------------------------------------------------------");
                 if (tabla[simplificados.get(i).getListUniones().get(0)][0].isFilaActiva() && tabla[simplificados.get(i).getListUniones().get(1)][0].isFilaActiva()) {
-                    comparacionFilas(tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(1), listSimbolos, listCasos, simplificados);
+                    comparacionFilas(i, tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(1), listSimbolos, listCasos, simplificados, true);
                 }
             }
 
         }
     }
 
-    public boolean comparacionFilas(NodoTabla[][] tabla, int idFila1, int idFila2, ArrayList<Simbolos> listSimbolos, ArrayList<NodoCaso> listCasos, ArrayList<NodoSimplificado> simplificados) {
+    public boolean comparacionFilas(int nodoActual, NodoTabla[][] tabla, int idFila1, int idFila2, ArrayList<Simbolos> listSimbolos, ArrayList<NodoCaso> listCasos, ArrayList<NodoSimplificado> simplificados, boolean primero) {
         boolean todoCorrecto = true;
+        System.out.println("NUEVO CICLO------------");
         for (int i = 1; i < listSimbolos.size() + 2; i++) {
             if (tabla[idFila1][i] != null && tabla[idFila2][i] != null) {
+
                 if (tabla[idFila1][i].getAccion().equals(tabla[idFila2][i].getAccion())) {
                     if (tabla[idFila1][i].getNoCaso() != tabla[idFila2][i].getNoCaso()) {
-                        if (verificarPosibleVinculo(simplificados, idFila1, idFila2)) {
-                            if (!comparacionFilas(tabla, tabla[idFila1][i].getNoCaso(), tabla[idFila1][i].getNoCaso(), listSimbolos, listCasos, simplificados)) {
+                        if ((idFila1 == tabla[idFila1][i].getNoCaso() && idFila2 == tabla[idFila2][i].getNoCaso()) || (idFila1 == tabla[idFila2][i].getNoCaso() && idFila2 == tabla[idFila1][i].getNoCaso())) {
+                        } else {
+                            if (verificarPosibleVinculo(nodoActual, simplificados, tabla[idFila1][i].getNoCaso(), tabla[idFila2][i].getNoCaso(), primero)) {
+
+                                if (!comparacionFilas(nodoActual, tabla, tabla[idFila1][i].getNoCaso(), tabla[idFila2][i].getNoCaso(), listSimbolos, listCasos, simplificados, false)) {
+                                    todoCorrecto = false;
+                                    break;
+                                }
+                            } else {
+                                System.out.println(nodoActual);
+                                System.out.println("            NO ES CIERTO DONDE DDEBERDADD FALLO ES AQUI XED");
                                 todoCorrecto = false;
                                 break;
                             }
-                        } else {
-                            todoCorrecto = false;
-                            break;
                         }
                     }
                 } else {
@@ -111,17 +120,20 @@ public class OptimizacionLALR {
             }
 
         }
+        System.out.println(todoCorrecto + "   num1: " + idFila1 + "   num2: " + idFila2);
         if (todoCorrecto) {
             if (idFila1 > idFila2) {
                 tabla[idFila1][0].setFilaActiva(false);
                 cambiarCasosTabla(tabla, idFila2, idFila1, listCasos, listSimbolos);
+                rellenoCasillas(tabla, idFila2, idFila1, listSimbolos);
             } else {
                 tabla[idFila2][0].setFilaActiva(false);
                 cambiarCasosTabla(tabla, idFila1, idFila2, listCasos, listSimbolos);
+                rellenoCasillas(tabla, idFila1, idFila2, listSimbolos);
             }
         }
         return todoCorrecto;
-    }
+    }   
 
     //cambia el noCaso al simplificado dentro de cada coincidencia en la tabla del LALR
     public NodoTabla[][] cambiarCasosTabla(NodoTabla[][] tabla, int id, int idACambiar, ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos) {
@@ -140,25 +152,53 @@ public class OptimizacionLALR {
     }
 
     //verifica si dos filas estan dentro del arraylist simpllificacion, si es asi proceder
-    public boolean verificarPosibleVinculo(ArrayList<NodoSimplificado> simplificados, int no1, int no2) {
+    public boolean verificarPosibleVinculo(int nodoActual, ArrayList<NodoSimplificado> simplificados, int no1, int no2, boolean primero) {
         boolean encontrados = false;
         for (int i = 0; i < simplificados.size(); i++) {
             boolean encontrado1 = false;
             boolean encontrado2 = false;
-            for (int j = 0; j < simplificados.get(i).getListUniones().size(); j++) {
-                if (no1 == simplificados.get(i).getListUniones().get(j)) {
-                    encontrado1 = true;
+            if (primero) {
+                for (int j = 0; j < simplificados.get(i).getListUniones().size(); j++) {
+                    if (no1 == simplificados.get(i).getListUniones().get(j)) {
+                        encontrado1 = true;
+                    }
+                    if (no2 == simplificados.get(i).getListUniones().get(j)) {
+                        encontrado2 = true;
+                    }
                 }
-                if (no2 == simplificados.get(i).getListUniones().get(j)) {
-                    encontrado2 = true;
+                if (encontrado1 && encontrado2) {
+                    encontrados = true;
+                    break;
                 }
-            }
-            if (encontrado1 && encontrado2) {
-                encontrados = true;
-                break;
+            } else {
+                if (nodoActual != i) {
+                    for (int j = 0; j < simplificados.get(i).getListUniones().size(); j++) {
+                        if (no1 == simplificados.get(i).getListUniones().get(j)) {
+                            encontrado1 = true;
+                        }
+                        if (no2 == simplificados.get(i).getListUniones().get(j)) {
+                            encontrado2 = true;
+                        }
+                    }
+                    if (encontrado1 && encontrado2) {
+                        encontrados = true;
+                        break;
+                    }
+                }
             }
         }
         return encontrados;
     }
 
+    //rellena las casillas en blanco que la otra fila si tenga ocupadas
+    public void rellenoCasillas(NodoTabla[][] tabla, int nodo1, int nodo2, ArrayList<Simbolos> listSimbolos){
+        for (int i = 1; i < listSimbolos.size() + 2; i++) {
+            if(tabla[nodo1][i] == null && tabla[nodo2][i] != null){
+                NodoTabla nuevo = new NodoTabla();
+                nuevo.setAccion(tabla[nodo2][i].getAccion());
+                nuevo.setNoCaso(tabla[nodo2][i].getNoCaso());
+                tabla[nodo1][i] = nuevo;
+            }
+        }
+    }
 }

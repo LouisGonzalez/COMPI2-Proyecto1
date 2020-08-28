@@ -8,13 +8,14 @@ package pollitos;
 import Arbol.NodoArbol;
 import Arbol.NodoSiguiente;
 import Automata.NodoEstado;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author luisGonzalez
  */
-public class MisExpresiones {
+public class MisExpresiones implements Serializable {
 
     private String identificador;
     private String caracteres;

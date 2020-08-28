@@ -5,11 +5,13 @@
  */
 package pollitos;
 
+import java.io.Serializable;
+
 /**
  *
  * @author luisitopapurey
  */
-public class Simbolos {
+public class Simbolos implements Serializable {
     
     private String tipo;
     private String identificador;

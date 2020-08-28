@@ -5,13 +5,14 @@
  */
 package Arbol;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author luisGonzalez
  */
-public class NodoArbol {
+public class NodoArbol implements Serializable {
     
     private NodoArbol nodo1;
     private NodoArbol nodo2;

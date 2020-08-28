@@ -5,13 +5,14 @@
  */
 package LALR;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author luisGonzalez
  */
-public class NodoCaso {
+public class NodoCaso implements Serializable {
     
     private int idCaso;
     private ArrayList<Estados> listEstados;

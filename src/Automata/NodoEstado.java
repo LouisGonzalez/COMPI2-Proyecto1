@@ -6,6 +6,7 @@
 package Automata;
 
 import Arbol.NodoArbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 import pollitos.Conductores;
 
@@ -13,7 +14,7 @@ import pollitos.Conductores;
  *
  * @author luisGonzalez
  */
-public class NodoEstado {
+public class NodoEstado implements Serializable{
     
     private int id;
     ArrayList<NodoArbol> listVinculos = new ArrayList<>();

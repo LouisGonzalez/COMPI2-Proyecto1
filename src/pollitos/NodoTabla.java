@@ -7,13 +7,14 @@ package pollitos;
 
 import Automata.NodoEstado;
 import LALR.NodoCaso;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author luisGonzalez
  */
-public class NodoTabla {
+public class NodoTabla implements Serializable{
     
     private String accion;
     private int noCaso;

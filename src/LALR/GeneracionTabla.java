@@ -77,10 +77,11 @@ public class GeneracionTabla {
         }*/
         //posiblesNuevosCasos(listCasos.get(listCasos.size() - 1), listCasos, listAux);
         buscarNuevosCasos(listAux, listEstados, listCasos);
-        for (int i = 0; i < listCasos.get(4).getListEstados().size(); i++) {
+
+        /*for (int i = 0; i < listCasos.get(4).getListEstados().size(); i++) {
             Integer ubicacion = verUbicacionPunto(listCasos.get(4).getListEstados().get(i).getMisExpresiones());
             System.out.println("el punto en la produccion " + listCasos.get(4).getListEstados().get(i).getIdentificador() + "  esta en la posicion   " + ubicacion);
-        }
+        }*/
         //         System.out.println("punto final:            "+ listCasos.get(4).getListEstados().get(0).getMisExpresiones().get(listCasos.get(4).getListEstados().get(0).getMisExpresiones().size() - 1).getPuntoFinal()+"      PUTNO FIANL");
     }
 
@@ -140,7 +141,10 @@ public class GeneracionTabla {
                             casoActual.getListEstados().add(nuevo);
                             if (!nuevo.getMisExpresiones().get(nodo).getEsTerminal()) {
                                 System.out.println(nuevo.getMisExpresiones().get(nodo).getIdentificador() + " NO ES TERMINAL, PROCEDO A DERIVAR");
-                                cerradura(listOriginal, nuevo.getMisExpresiones().get(nodo).getIdentificador(), listCasos, casoActual.getListEstados().get(casoActual.getListEstados().size() - 1), casoActual, expresionAux);
+
+                                if (!nuevo.getIdentificador().equals(nuevo.getMisExpresiones().get(nodo).getIdentificador())) {
+                                    cerradura(listOriginal, nuevo.getMisExpresiones().get(nodo).getIdentificador(), listCasos, casoActual.getListEstados().get(casoActual.getListEstados().size() - 1), casoActual, expresionAux);
+                                }
                             }
                         }
                     }

@@ -5,11 +5,13 @@
  */
 package LALR;
 
+import java.io.Serializable;
+
 /**
  *
  * @author luisGonzalez
  */
-public class Carril {
+public class Carril implements Serializable{
     
     private String id;
     private Object simbolo;

@@ -6,6 +6,7 @@
 package LALR;
 
 import Arbol.NodoArbol;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -13,7 +14,7 @@ import java.util.regex.Pattern;
  *
  * @author luisGonzalez
  */
-public class Expresiones {
+public class Expresiones implements Serializable {
     
     private String identificador;
     private Boolean esTerminal;

@@ -16,7 +16,8 @@ parser code {:
     public ArrayList<MisExpresiones> listTemporal = new ArrayList<>();
     public ArrayList<Simbolos> listSimbolos = new ArrayList<>();
     public GeneracionArbol miArbol = new GeneracionArbol();
-    
+    public DatosLenguaje datos;
+    public Lenguajes nuevo;
     public int cont1 = 1;
     
     public ArrayList<MisExpresiones> listExpresiones;
@@ -25,12 +26,13 @@ parser code {:
     public Verificaciones2 ver5 = new Verificaciones2();
     public CreacionClases clase = new CreacionClases();
     
-    public SintaxLEN(AnalizadorLexico lex, ArrayList<MisExpresiones> listExpresiones, ArrayList<Estados> listEstados, ArrayList<MisExpresiones> listTemporal, ArrayList<Simbolos> listSimbolos){
+    public SintaxLEN(AnalizadorLexico lex, ArrayList<Estados> listEstados, ArrayList<MisExpresiones> listTemporal, ArrayList<Simbolos> listSimbolos, Lenguajes nuevo){
         super(lex);
         this.listEstados = listEstados;
         this.listExpresiones = listExpresiones;
         this.listTemporal = listTemporal;
         this.listSimbolos = listSimbolos;
+        this.nuevo = nuevo;
     }
 
     public void setAccion(String tipo, String mensaje, String accion){
@@ -108,7 +110,7 @@ parser code {:
    
     start with A;
 
-    A ::= A1:a {: if(a.getNombre()==null){ System.out.println("Falta atributo nombre"); } :} separador A2:b {: parser.clase.nuevaClase("pruebaClase", b); :} separador A3:c {: parser.traspasarDatos3(c, parser.listTemporal); :} separador A4:d {: parser.traspasarDatos(d, parser.listSimbolos);     parser.listSimbolos.add(new Simbolos("Terminal", "$", "")); :} separador A5:e separador {: parser.cont1=1; parser.traspasarDatos2(e, parser.listEstados); :}
+    A ::= A1:a {: if(a.getNombre()==null){ System.out.println("Falta atributo nombre"); } else { parser.nuevo.setDatos(a);  } :} separador A2:b {: parser.clase.nuevaClase("pruebaClase", b); :} separador A3:c {: parser.traspasarDatos3(c, parser.listTemporal); :} separador A4:d {: parser.traspasarDatos(d, parser.listSimbolos);     parser.listSimbolos.add(new Simbolos("Terminal", "$", "")); :} separador A5:e separador {: parser.cont1=1; parser.traspasarDatos2(e, parser.listEstados); :}
 ;
     A1 ::= A11:a {: RESULT=a; :}
 ;

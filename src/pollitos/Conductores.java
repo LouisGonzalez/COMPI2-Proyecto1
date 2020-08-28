@@ -5,11 +5,13 @@
  */
 package pollitos;
 
+import java.io.Serializable;
+
 /**
  *
  * @author luisGonzalez
  */
-public class Conductores {
+public class Conductores implements Serializable{
     
     private int prioridad;
     private String id;

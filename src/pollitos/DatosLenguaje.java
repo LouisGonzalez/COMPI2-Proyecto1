@@ -5,11 +5,13 @@
  */
 package pollitos;
 
+import java.io.Serializable;
+
 /**
  *
  * @author luisGonzalez
  */
-public class DatosLenguaje {
+public class DatosLenguaje implements Serializable {
     
     private String nombre;
     private String version;

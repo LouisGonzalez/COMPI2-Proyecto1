@@ -5,11 +5,13 @@
  */
 package LALR;
 
+import java.io.Serializable;
+
 /**
  *
  * @author luisGonzalez
  */
-public class Vinculos {
+public class Vinculos implements Serializable{
     
     private int idCasoVinculo;
     private Object vinculo;

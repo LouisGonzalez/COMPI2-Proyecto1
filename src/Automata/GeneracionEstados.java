@@ -7,6 +7,7 @@ package Automata;
 
 import Arbol.NodoArbol;
 import Arbol.NodoSiguiente;
+import java.io.Serializable;
 import java.util.ArrayList;
 import pollitos.Conductores;
 import pollitos.MisExpresiones;
@@ -15,7 +16,7 @@ import pollitos.MisExpresiones;
  *
  * @author luisGonzalez
  */
-public class GeneracionEstados {
+public class GeneracionEstados implements Serializable{
 
     public Integer sinMarcar = null;
 

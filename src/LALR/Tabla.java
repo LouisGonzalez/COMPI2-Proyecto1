@@ -23,6 +23,7 @@ public class Tabla {
 
         rellenarFilaGuia(tabla, listSimbolos);
         rellenarColumnaGuia(tabla, listCasos);
+        crearEstadoAceptacion(tabla, listCasos, listSimbolos);
         llenadoTabla(listCasos, tabla, listSimbolos);
 
         llenadoTablaReduces(listCasos, tabla, listSimbolos);
@@ -46,6 +47,26 @@ public class Tabla {
             nuevo.setIdCasoFila(listCasos.get(i).getIdCaso());
             nuevo.setCasoColumna(listCasos.get(i));
             tabla[i + 1][0] = nuevo;
+        }
+        return tabla;
+    }
+    
+    public NodoTabla[][] crearEstadoAceptacion(NodoTabla[][] tabla, ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos){
+        for (int i = 0; i < listCasos.size(); i++) {
+            for (int j = 0; j < listCasos.get(i).getListEstados().get(0).getMisExpresiones().size(); j++) {
+                Integer aceptacion = gnTabla.verUbicacionPunto(listCasos.get(i).getListEstados().get(0).getMisExpresiones());
+                if(aceptacion != null){
+                    if(listCasos.get(i).getListEstados().get(0).getMisExpresiones().get(aceptacion).getIdentificador().equals("$")){
+                        Integer columna = determinarColumna("$", tabla, listSimbolos);
+                        if(columna != null){
+                            NodoTabla nuevo = new NodoTabla();
+                            nuevo.setAccion("aceptacion");
+                            tabla[listCasos.get(i).getIdCaso()][columna] = nuevo;
+                            break;
+                        }
+                    }
+                }
+            }
         }
         return tabla;
     }
@@ -128,27 +149,16 @@ public class Tabla {
 
     public void mostrarTabla(NodoTabla[][] tabla, ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos) {
         for (int i = 0; i < listCasos.size(); i++) {
-            System.out.println("Caso no: " + listCasos.get(i).getIdCaso());
             if (tabla[listCasos.get(i).getIdCaso()][0].isFilaActiva()) {
+                System.out.println("Caso no: " + listCasos.get(i).getIdCaso());
                 for (int j = 0; j < listSimbolos.size(); j++) {
                     if (tabla[i + 1][j + 1] != null && tabla[i + 1][j + 1] != null) {
-                        System.out.println("    " + tabla[i + 1][j + 1].getAccion() + " " + tabla[i + 1][j + 1].getNoCaso());
+                        System.out.println("    " + tabla[i + 1][j + 1].getAccion() + " " + tabla[i + 1][j + 1].getNoCaso()+ " "+tabla[0][j+1].getSimbolo().getIdentificador());
                     }
                 }
             }
         }
     }
 
-    public void shift() {
-
-    }
-
-    public void reduce() {
-
-    }
-
-    public void goTo() {
-
-    }
 
 }

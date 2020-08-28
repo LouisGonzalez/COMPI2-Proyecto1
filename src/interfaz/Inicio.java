@@ -5,13 +5,24 @@
  */
 package interfaz;
 
+import Arbol.GeneracionArbol;
 import LALR.Estados;
+import LALR.GeneracionTabla;
 import LALR.NodoCaso;
+import LALR.OptimizacionLALR;
+import LALR.Tabla;
+import Repositorio.Guardado;
+import gramaticaLEN.AnalizadorLexico;
+import gramaticaLEN.SintaxLEN;
 import hojas.NuevaHoja;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import pollitos.Lenguajes;
 import pollitos.MisExpresiones;
 
 /**
@@ -20,22 +31,43 @@ import pollitos.MisExpresiones;
  */
 public class Inicio extends javax.swing.JFrame {
 
-    private MisExpresiones expresion;
-    
     //Estos arraylist lo mas probable es que sean temporales (BORRADOS CON EL TIEMPO)
-    private ArrayList<MisExpresiones> listExpresion = new ArrayList<>();
+    private Lenguajes elegido = null;
+    private ArrayList<Lenguajes> listLenguajes = new ArrayList<>();
+
     private ArrayList<Estados> listEstados = new ArrayList<>();
     private ArrayList<NodoCaso> listCasos = new ArrayList<>();
-     
-    
-    
+
+    private GeneracionArbol creacionArbol = new GeneracionArbol();
+    private GeneracionTabla creacionTabla = new GeneracionTabla();
+    private Tabla tabla2 = new Tabla();
+    private OptimizacionLALR lalr = new OptimizacionLALR();
+    private Guardado repositorio = new Guardado();
+
     private NuevaHoja nueva = new NuevaHoja();
     String a = "\\n";
+    private final String REPOSITORIO = "/home/luisitopapurey/Escritorio/Compiladores 2/Proyecto 1/Repositorio/";
     
     public Inicio() {
         initComponents();
         setLocationRelativeTo(null);
-      
+        ArrayList<String> archivos = new ArrayList<>();
+        try {
+            Files.walk(Paths.get(REPOSITORIO)).forEach(ruta -> {
+                if (!Files.isDirectory(ruta)) {
+                    archivos.add(ruta.toString());
+                }
+            });
+        } catch (IOException ex) {
+            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for (int i = 0; i < archivos.size(); i++) {
+            Lenguajes nuevo = repositorio.abrirLenguaje(archivos.get(i));
+            listLenguajes.add(nuevo);
+        }
+        for (int i = 0; i < listLenguajes.size(); i++) {
+            comboLen.addItem(listLenguajes.get(i).getDatos().getNombre());
+        }
     }
 
     /**
@@ -48,6 +80,11 @@ public class Inicio extends javax.swing.JFrame {
     private void initComponents() {
 
         tabbed = new javax.swing.JTabbedPane();
+        comboLen = new javax.swing.JComboBox<>();
+        txtLenguaje = new javax.swing.JLabel();
+        btnConfirmar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuNuevo = new javax.swing.JMenuItem();
@@ -65,6 +102,24 @@ public class Inicio extends javax.swing.JFrame {
         menuPila = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(tabbed, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, 910, 570));
+
+        getContentPane().add(comboLen, new org.netbeans.lib.awtextra.AbsoluteConstraints(173, 13, 238, -1));
+
+        txtLenguaje.setFont(new java.awt.Font("Dialog", 0, 10)); // NOI18N
+        txtLenguaje.setText("Lenguaje seleccionado:");
+        getContentPane().add(txtLenguaje, new org.netbeans.lib.awtextra.AbsoluteConstraints(21, 18, 134, -1));
+
+        btnConfirmar.setText("Confirmar");
+        btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(429, 12, 151, -1));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 644, -1, -1));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(934, 561, 25, 11));
 
         jMenu1.setText("Archivo");
 
@@ -109,6 +164,11 @@ public class Inicio extends javax.swing.JFrame {
         jMenu3.add(menuComp);
 
         menuCargar.setText("Cargar lenguaje");
+        menuCargar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCargarActionPerformed(evt);
+            }
+        });
         jMenu3.add(menuCargar);
 
         menuBorrar.setText("Borrar lenguaje");
@@ -128,23 +188,6 @@ public class Inicio extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabbed, javax.swing.GroupLayout.DEFAULT_SIZE, 920, Short.MAX_VALUE)
-                .addGap(23, 23, 23))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(tabbed, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -156,19 +199,19 @@ public class Inicio extends javax.swing.JFrame {
         chooser.setDialogTitle(seleccion);
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
-        if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION){
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
             System.out.println("getSelectedFile(): " + chooser.getSelectedFile());
             archivoNuevo = new File(chooser.getSelectedFile().getAbsolutePath());
             FileReader reader = null;
             BufferedReader buffer = null;
             String texto = "";
-            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, listExpresion, listEstados, listCasos);
+            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, listEstados, listCasos);
         }
     }//GEN-LAST:event_menuAbrirActionPerformed
 
     private void menuNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNuevoActionPerformed
-        PanelHojas panel = new PanelHojas("", "", listExpresion, listEstados, listCasos);
+        PanelHojas panel = new PanelHojas("", "", listEstados, listCasos);
         tabbed.addTab("Sin nombre", panel);
         tabbed.setTabComponentAt(tabbed.getTabCount() - 1, nueva.crearCabecera("Sin nombre", tabbed));
     }//GEN-LAST:event_menuNuevoActionPerformed
@@ -177,8 +220,65 @@ public class Inicio extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_menuSalirActionPerformed
 
+    private void menuCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCargarActionPerformed
+        File nuevoLenguaje;
+        JFileChooser chooser = new JFileChooser();
+        String seleccion = "Seleccione un archivo .len";
+        chooser.setCurrentDirectory(new File("."));
+        chooser.setDialogTitle(seleccion);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+        if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+            System.out.println("getSelectedFile(): " + chooser.getSelectedFile());
+            nuevoLenguaje = new File(chooser.getSelectedFile().getAbsolutePath());
+            FileReader reader = null;
+            BufferedReader buffer = null;
+            String texto = "";
+            try {
+                reader = new FileReader(nuevoLenguaje.toString());
+                buffer = new BufferedReader(reader);
+                while (buffer.ready()) {
+                    texto += buffer.readLine() + "\n";
+                }
+
+                AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(texto));
+                Lenguajes nuevo = new Lenguajes();
+                try {
+                    new SintaxLEN(lexico, nuevo.getListEstados(), nuevo.getListExpresiones(), nuevo.getListSimbolos(), nuevo).parse();
+                    nuevo.setPrimero(creacionArbol.unirArboles(nuevo.getListExpresiones()));
+                    nuevo.setUnico(new MisExpresiones("principal", nuevo.getPrimero(), ""));
+                    creacionArbol.pruebaExpresion(nuevo.getUnico());
+                    creacionTabla.creacionCasos(nuevo.getListEstados(), nuevo.getListCasos());
+                    nuevo.setMiTabla(tabla2.creacionTabla(nuevo.getListCasos(), nuevo.getListSimbolos()));
+                    lalr.buscarCasosIguales(nuevo.getListCasos(), nuevo.getMiTabla(), nuevo.getListSimbolos());
+                    tabla2.mostrarTabla(nuevo.getMiTabla(), nuevo.getListCasos(), nuevo.getListSimbolos());
+                    repositorio.guardarLenguaje(nuevo.getDatos().getNombre(), nuevo, REPOSITORIO);
+
+                } catch (Exception ex) {
+                    Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }//GEN-LAST:event_menuCargarActionPerformed
+
+    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
+        int seleccionado = comboLen.getSelectedIndex();
+        elegido = listLenguajes.get(seleccionado);
+        System.out.println("seleccione el lenguaje: "+elegido.getDatos().getNombre());
+    }//GEN-LAST:event_btnConfirmarActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnConfirmar;
+    private javax.swing.JComboBox<String> comboLen;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -195,5 +295,6 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuPila;
     private javax.swing.JMenuItem menuSalir;
     private javax.swing.JTabbedPane tabbed;
+    private javax.swing.JLabel txtLenguaje;
     // End of variables declaration//GEN-END:variables
 }

@@ -31,14 +31,14 @@ import pollitos.MisExpresiones;
  */
 public class NuevaHoja {
     
-    public void crearHoja(File archivo, FileReader reader, BufferedReader buffer, String texto, JTabbedPane principal, ArrayList<MisExpresiones> listExpresiones, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos){
+    public void crearHoja(File archivo, FileReader reader, BufferedReader buffer, String texto, JTabbedPane principal, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos){
         try {
             reader = new FileReader(archivo.toString());
             buffer = new BufferedReader(reader);
             while(buffer.ready()){
                 texto += buffer.readLine() + "\n";
             }
-            abrirPanel(texto, archivo.getPath(), archivo.getName(), principal, listExpresiones, listEstados, listCasos);
+            abrirPanel(texto, archivo.getPath(), archivo.getName(), principal, listEstados, listCasos);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NuevaHoja.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -46,8 +46,8 @@ public class NuevaHoja {
         }
     }
     
-    public void abrirPanel(String texto, String path, String titulo, JTabbedPane principal, ArrayList<MisExpresiones> listExpresiones, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos){
-        PanelHojas panel = new PanelHojas(texto, path, listExpresiones, listEstados, listCasos);
+    public void abrirPanel(String texto, String path, String titulo, JTabbedPane principal, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos){
+        PanelHojas panel = new PanelHojas(texto, path, listEstados, listCasos);
         principal.addTab(titulo, panel);
         principal.setTabComponentAt(principal.getTabCount() - 1, crearCabecera(titulo, principal));
     }

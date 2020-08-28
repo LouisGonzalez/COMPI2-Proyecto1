@@ -1,4 +1,4 @@
-nombre: javaMicro44Sistemsperro;
+nombre: java;
 autor: sun Microsystems;
 lanzamiento: 1996; /* Significa que cuando se encuentre este token deberá ser ignorado */
 extension: java;
@@ -37,7 +37,7 @@ hola = "hola";
 
 %% 
 
-terminal igual, letrax, por; /* Significa que cuando se encuentre este token deberá ser ignorado */
+terminal igual, letrax, por, hola; /* Significa que cuando se encuentre este token deberá ser ignorado */
 terminal ida, num, reals;
 
 no terminal S, V, E;

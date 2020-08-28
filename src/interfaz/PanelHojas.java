@@ -7,12 +7,10 @@ package interfaz;
 
 import Arbol.GeneracionArbol;
 import Arbol.NodoArbol;
-import Arbol.Raiz;
-import Automata.GeneracionEstados;
 import Automata.Transiciones;
-import LALR.ArregloExpresiones;
 import LALR.Carril;
 import LALR.Estados;
+import LALR.FuncionesTabla;
 import LALR.GeneracionTabla;
 import LALR.NodoCaso;
 import LALR.OptimizacionLALR;
@@ -25,10 +23,11 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
+import pollitos.Lenguajes;
 import pollitos.MisExpresiones;
 import pollitos.NodoTabla;
 import pollitos.Simbolos;
+import pollitos.Token;
 
 /**
  *
@@ -37,24 +36,21 @@ import pollitos.Simbolos;
 public class PanelHojas extends javax.swing.JPanel {
 
     private NumeracionLineas numeracion;
-    private ArrayList<MisExpresiones> listExpresiones;
     private ArrayList<MisExpresiones> listExpresiones2 = new ArrayList<>();
     private ArrayList<Estados> listEstados;
     private ArrayList<NodoCaso> listCasos;
-
+    private FuncionesTabla funciones = new FuncionesTabla();
     public static NodoTabla[][] miTabla = null;
-    
     private ArrayList<Simbolos> listSimbolos = new ArrayList<>();
-
     private GeneracionTabla tabla = new GeneracionTabla();
-
     private Tabla tabla2 = new Tabla();
-
     private GeneracionArbol arbol2 = new GeneracionArbol();
 
     private Transiciones transicion = new Transiciones();
     
     private OptimizacionLALR lalr = new OptimizacionLALR();
+    
+    private ArrayList<Token> listTokens = new ArrayList<>();
 
     private NodoArbol primero = null;
     MisExpresiones unico = null;
@@ -62,9 +58,8 @@ public class PanelHojas extends javax.swing.JPanel {
     /**
      * Creates new form PanelHojas
      */
-    public PanelHojas(String texto, String path, ArrayList<MisExpresiones> listExpresiones, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos) {
+    public PanelHojas(String texto, String path, ArrayList<Estados> listEstados, ArrayList<NodoCaso> listCasos) {
         initComponents();
-        this.listExpresiones = listExpresiones;
         this.listEstados = listEstados;
         this.listCasos = listCasos;
         txtCodigo.setText(texto);
@@ -227,7 +222,8 @@ public class PanelHojas extends javax.swing.JPanel {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(txtCodigo.getText()));
         try {
-            new SintaxLEN(lexico, listExpresiones, listEstados, listExpresiones2, listSimbolos).parse();
+            Lenguajes algo = new Lenguajes();
+            new SintaxLEN(lexico, listEstados, listExpresiones2, listSimbolos, algo).parse();
             /*     for (int i = 0; i < listExpresiones.size(); i++) {
                 jComboBox1.addItem(listExpresiones.get(i).getIdentificador());
 
@@ -319,17 +315,19 @@ public class PanelHojas extends javax.swing.JPanel {
     }//GEN-LAST:event_diagramaActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        ArrayList<String> cadenas = new ArrayList<>();
+        listTokens = new ArrayList<>();
         String[] lineas = estado.getText().split("\n");
         String texto = "";
         for (String linea : lineas) {
-            texto += linea;
+            texto += linea; 
         }
-
-        transicion.transicionCadena(cadenas, unico.getListEstados().get(0), unico.getListEstados(), texto, unico.getTablaSiguientes());
-        for (int j = 0; j < cadenas.size(); j++) {
-            System.out.println("Cadena:  " + cadenas.get(j));
+        transicion.transicionCadena(listTokens, unico.getListEstados().get(0), unico.getListEstados(), texto, unico.getTablaSiguientes());
+        for (int j = 0; j < listTokens.size(); j++) {
+            System.out.println("Cadena:  " + listTokens.get(j).getIdentificador()+" "+listTokens.get(j).getValor().toString());
         }
+      //  System.out.println(miTabla[0][1].getSimbolo().getIdentificador());
+       funciones.transiciones(listTokens, miTabla, listSimbolos, listEstados);
+        
     }//GEN-LAST:event_jButton4ActionPerformed
 
 

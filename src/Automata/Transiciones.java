@@ -7,15 +7,19 @@ package Automata;
 
 import Arbol.NodoArbol;
 import Arbol.NodoSiguiente;
+import java.io.Serializable;
 import java.util.ArrayList;
+import pollitos.Token;
 
 /**
  *
  * @author luisGonzalez
  */
-public class Transiciones {
+public class Transiciones implements Serializable {
 
-    public void transicionCadena(ArrayList<String> cadenas, NodoEstado estadoInicial, ArrayList<NodoEstado> listEstados, String texto, ArrayList<NodoSiguiente> tablaSiguientes) {
+    public Integer iterador2 = null;
+    
+    public void transicionCadena(ArrayList<Token> listTokens, NodoEstado estadoInicial, ArrayList<NodoEstado> listEstados, String texto, ArrayList<NodoSiguiente> tablaSiguientes) {
         String cadena = "";
         int textoTotal = texto.length();
         int iterador = 0;
@@ -39,25 +43,44 @@ public class Transiciones {
             }
         } while (estadoActual == estadoNuevo);
         if (estadoActual.isAceptacion()) {
-            verificarPrioridad(estadoActual, cadena);
-            cadenas.add(cadena);
-        }
-        if (iterador < textoTotal) {
-            String nuevoTexto = "";
-            for (int i = iterador; i < texto.length(); i++) {
-                if (i == iterador) {
-                    if (texto.charAt(iterador) == ' ') {
+            verificarPrioridad(estadoActual, cadena, listTokens);
+            if (iterador < textoTotal) {
+                String nuevoTexto = "";
+                for (int i = iterador; i < texto.length(); i++) {
+                    if (i == iterador) {
+                        if (texto.charAt(iterador) == ' ') {
+                        } else {
+                            nuevoTexto += texto.charAt(i);
+                        }
                     } else {
                         nuevoTexto += texto.charAt(i);
                     }
-                } else {
-                    nuevoTexto += texto.charAt(i);
-
                 }
-
+                transicionCadena(listTokens, estadoInicial, listEstados, nuevoTexto, tablaSiguientes);
             }
-
-            transicionCadena(cadenas, estadoInicial, listEstados, nuevoTexto, tablaSiguientes);
+        } else {
+            if (iterador < textoTotal) {
+                String nuevoTexto = "";
+                for (int i = iterador+1; i < texto.length(); i++) {
+                    if (i == iterador+1) {
+                        if (texto.charAt(iterador+1) == ' ') {
+                        } else {
+                            nuevoTexto += texto.charAt(i);
+                        }
+                    } else {
+                        nuevoTexto += texto.charAt(i);
+                    }
+                }
+                String textoError = "";
+                for (int i = 0; i <= iterador; i++) {
+                    textoError += texto.charAt(i);
+                }
+                Token nuevo = new Token(null, "error", textoError);
+                listTokens.add(nuevo);
+                
+                //AQUI INGRESO UN TOKEN DE TIPO ERROR PARA EL ANALIZADOR SINTACTICO Y QUE AHI LO MUESTRE :DDD
+                transicionCadena(listTokens, estadoInicial, listEstados, nuevoTexto, tablaSiguientes);
+            }
         }
     }
 
@@ -65,7 +88,7 @@ public class Transiciones {
         NodoEstado aEnviar = null;
         char actual = c;
         for (int i = 0; i < estadoActual.getListVinculos().size(); i++) {
-            if (estadoActual.getListVinculos().get(i).getTipo().equals("rango")) {
+                if (estadoActual.getListVinculos().get(i).getTipo().equals("rango")) {
                 int codigo = (int) actual;
                 if (codigo >= estadoActual.getListVinculos().get(i).getRangoChar1() && codigo <= estadoActual.getListVinculos().get(i).getRangoChar2()) {
                     //aqui buscar a donde ir
@@ -107,7 +130,7 @@ public class Transiciones {
         return aux;
     }
 
-    public void verificarPrioridad(NodoEstado aceptacion, String cadena) {
+    public void verificarPrioridad(NodoEstado aceptacion, String cadena, ArrayList<Token> listTokens) {
         if (aceptacion.getConductores().size() > 1) {
             int aux = aceptacion.getConductores().get(0).getPrioridad();
             String token = aceptacion.getConductores().get(0).getId();
@@ -131,16 +154,15 @@ public class Transiciones {
                     }
                 }
             }
-            System.out.println("el token devuelto es un token: " + token);
+            Token miToken = new Token(token, null, cadena);
+
+            //    System.out.println("el token devuelto es un token: " + miToken.getIdentificador());
+            listTokens.add(miToken);
         } else {
-            System.out.println("el token devuelto es un token: " + aceptacion.getConductores().get(0).getId());
+            Token miToken = new Token(aceptacion.getConductores().get(0).getId(), null, cadena);
+            listTokens.add(miToken);
+            //   System.out.println("el token devuelto es un token: " + miToken.getIdentificador());
         }
     }
 
 }
-
-
-
-
-
-
