@@ -16,12 +16,23 @@ import java.util.ArrayList;
  */
 public class NodoTabla implements Serializable{
     
-    private String accion;
-    private int noCaso;
+   // private String accion;
+   // private int noCaso;
+    
+    
+    private ArrayList<NodoAccion> acciones = new ArrayList<>();
     private Simbolos simbolo;
     private NodoCaso casoColumna;
     private int idCasoFila;
     private boolean filaActiva;
+
+    public ArrayList<NodoAccion> getAcciones() {
+        return acciones;
+    }
+
+    public void setAcciones(ArrayList<NodoAccion> acciones) {
+        this.acciones = acciones;
+    }
 
     public int getIdCasoFila() {
         return idCasoFila;
@@ -56,7 +67,7 @@ public class NodoTabla implements Serializable{
         this.simbolo = simbolo;
     }
     
-    public String getAccion() {
+ /*   public String getAccion() {
         return accion;
     }
 
@@ -70,7 +81,7 @@ public class NodoTabla implements Serializable{
 
     public void setNoCaso(int noCaso) {
         this.noCaso = noCaso;
-    }
+    }*/
     
     
     

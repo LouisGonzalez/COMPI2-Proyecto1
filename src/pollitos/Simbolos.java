@@ -16,11 +16,21 @@ public class Simbolos implements Serializable {
     private String tipo;
     private String identificador;
     private String valor;
+    private int precedencia;
 
-    public Simbolos(String tipo, String identificador, String valor) {
+    public Simbolos(String tipo, String identificador, String valor, int precedencia) {
         this.tipo = tipo;
         this.identificador = identificador;
         this.valor = valor;
+        this.precedencia = precedencia;
+    }
+
+    public int getPrecedencia() {
+        return precedencia;
+    }
+
+    public void setPrecedencia(int precedencia) {
+        this.precedencia = precedencia;
     }
     
     

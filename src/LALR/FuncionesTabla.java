@@ -5,6 +5,7 @@
  */
 package LALR;
 
+import Graficas.GraficaPila;
 import java.util.ArrayList;
 import pollitos.NodoTabla;
 import pollitos.Pila;
@@ -18,12 +19,15 @@ import pollitos.Token;
 public class FuncionesTabla {
 
     private Integer noFila = null;
+    private Precedencia precedencia = new Precedencia();
+    private GraficaPila grafica = new GraficaPila();
 
     public void transiciones(ArrayList<Token> listTokens, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos, ArrayList<Estados> listEstados) {
         ArrayList<Pila> miPila = new ArrayList<>();
         boolean cadenaAceptada = true;
         miPila.add(new Pila(null, 1));
         mostrarPila(miPila);
+        grafica.tablaPila(miPila);
         listTokens.add(new Token("$", "aceptacion", "$"));
         noFila = 1;
         for (int i = 0; i < listTokens.size(); i++) {
@@ -35,18 +39,26 @@ public class FuncionesTabla {
             Integer columna = buscarColumna(tabla, listTokens.get(i).getIdentificador(), listSimbolos);
             if (columna != null) {
                 if (tabla[noFila][columna] != null) {
-                    if (tabla[noFila][columna].getAccion().equals("reduce")) {
-                        //                 System.out.println("REDUCE ");
-                        if (!reduce(listTokens.get(i), miPila, listEstados, tabla[noFila][columna].getNoCaso(), tabla, listSimbolos)) {
-                            cadenaAceptada = false;
-                            break;
-                        }
-                    } else if (tabla[noFila][columna].getAccion().equals("goTo")) {
-                    } else if (tabla[noFila][columna].getAccion().equals("shift")) {
-                        //                  System.out.println("SHIFT");
-                        if (!shift(listTokens.get(i), miPila, tabla[noFila][columna].getNoCaso())) {
-                            cadenaAceptada = false;
-                            break;
+                    Integer noAccion = null;
+                    if (tabla[noFila][columna].getAcciones().size() == 1) {
+                        noAccion = 0;
+                    } else if (tabla[noFila][columna].getAcciones().size() > 1) {
+                        noAccion = precedencia.manejarPrecedencia(miPila, listTokens.get(i), listSimbolos, tabla, noFila, columna);
+                    }
+                    if (noAccion != null) {
+                        if (tabla[noFila][columna].getAcciones().get(noAccion).getAccion().equals("reduce")) {
+                            //                 System.out.println("REDUCE ");
+                            if (!reduce(listTokens.get(i), miPila, listEstados, tabla[noFila][columna].getAcciones().get(0).getNoCaso(), tabla, listSimbolos)) {
+                                cadenaAceptada = false;
+                                break;
+                            }
+                        } else if (tabla[noFila][columna].getAcciones().get(noAccion).getAccion().equals("goTo")) {
+                        } else if (tabla[noFila][columna].getAcciones().get(noAccion).getAccion().equals("shift")) {
+                            //                  System.out.println("SHIFT");
+                            if (!shift(listTokens.get(i), miPila, tabla[noFila][columna].getAcciones().get(0).getNoCaso())) {
+                                cadenaAceptada = false;
+                                break;
+                            }
                         }
                     }
                 } else {
@@ -57,7 +69,7 @@ public class FuncionesTabla {
                 }
             }
             if (i == listTokens.size() - 1) {
-                if (!tabla[noFila][columna].getAccion().equals("aceptacion")) {
+                if (!tabla[noFila][columna].getAcciones().get(0).getAccion().equals("aceptacion")) {
                     cadenaAceptada = false;
                 }
             }
@@ -74,6 +86,7 @@ public class FuncionesTabla {
         miPila.add(nuevo);
         noFila = casoTransicion;
         mostrarPila(miPila);
+        grafica.tablaPila(miPila);
         System.out.println("--------------------------------------------------------------------------");
         return true;
     }
@@ -96,6 +109,7 @@ public class FuncionesTabla {
         }
         if (todoCorrecto) {
             mostrarPila(miPila);
+            grafica.tablaPila(miPila);
             System.out.println("--------------------------------------------------------------------------");
             Token nuevo = new Token(analizado.getIdentificador(), null, null);
             nuevo.setEsTerminal(false);
@@ -103,19 +117,26 @@ public class FuncionesTabla {
             Integer numPila = null;
             Integer columna = buscarColumna(tabla, analizado.getIdentificador(), listSimbolos);
             if (tabla[miPila.get(miPila.size() - 1).getNoCaso()][columna] != null) {
-                //System.out.println("fila: "+miPila.get(miPila.size() - 1).getNoCaso()+"  columna: "+tabla[0][columna].getSimbolo().getIdentificador());
-                if (tabla[miPila.get(miPila.size() - 1).getNoCaso()][columna].getAccion().equals("goTo")) {
-                    numPila = tabla[miPila.get(miPila.size() - 1).getNoCaso()][columna].getNoCaso();
-                    noFila = numPila;
-                    nuevo2.setNoCaso(numPila);
-                    miPila.add(nuevo2);
-                    mostrarPila(miPila);
-                    System.out.println("--------------------------------------------------------------------------");
-                    if (!reingresoToken(actual, miPila, tabla, listSimbolos, listEstados)) {
-                        todoCorrecto = false;
+                Integer noAccion = null;
+                if (tabla[miPila.get(miPila.size() - 1).getNoCaso()][columna].getAcciones().size() == 1) {
+                    noAccion = 0;
+                } else if (tabla[miPila.get(miPila.size() - 1).getNoCaso()][columna].getAcciones().size() > 1) {
+                    noAccion = precedencia.manejarPrecedencia(miPila, actual, listSimbolos, tabla, miPila.get(miPila.size() - 1).getNoCaso(), columna);
+                }
+                if (noAccion != null) {
+                    if (tabla[miPila.get(miPila.size() - 1).getNoCaso()][columna].getAcciones().get(noAccion).getAccion().equals("goTo")) {
+                        numPila = tabla[miPila.get(miPila.size() - 1).getNoCaso()][columna].getAcciones().get(noAccion).getNoCaso();
+                        noFila = numPila;
+                        nuevo2.setNoCaso(numPila);
+                        miPila.add(nuevo2);
+                        mostrarPila(miPila);
+                        grafica.tablaPila(miPila);
+                        System.out.println("--------------------------------------------------------------------------");
+                        if (!reingresoToken(actual, miPila, tabla, listSimbolos, listEstados)) {
+                            todoCorrecto = false;
+                        }
                     }
                 }
-
             } else {
                 todoCorrecto = false;
             }
@@ -130,18 +151,26 @@ public class FuncionesTabla {
         int ultimoNodo = miPila.get(miPila.size() - 1).getNoCaso();
         int columna = buscarColumna(tabla, actual.getIdentificador(), listSimbolos);
         if (tabla[ultimoNodo][columna] != null) {
-            if (tabla[ultimoNodo][columna].getAccion().equals("reduce")) {
-                //   System.out.println("REDUCE2");
-                //        System.out.println("fila: "+ultimoNodo+" columnax2: "+columna);
-                if (!reduce(actual, miPila, listEstados, tabla[ultimoNodo][columna].getNoCaso(), tabla, listSimbolos)) {
-                    todoCorrecto = false;
-                }
-            } else if (tabla[ultimoNodo][columna].getAccion().equals("goTo")) {
+            Integer noAccion = null;
+            if (tabla[ultimoNodo][columna].getAcciones().size() == 1) {
+                noAccion = 0;
+            } else if (tabla[ultimoNodo][columna].getAcciones().size() > 1) {
+                noAccion = precedencia.manejarPrecedencia(miPila, actual, listSimbolos, tabla, ultimoNodo, columna);
+            }
+            if (noAccion != null) {
+                if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("reduce")) {
+                    //   System.out.println("REDUCE2");
+                    //        System.out.println("fila: "+ultimoNodo+" columnax2: "+columna);
+                    if (!reduce(actual, miPila, listEstados, tabla[ultimoNodo][columna].getAcciones().get(noAccion).getNoCaso(), tabla, listSimbolos)) {
+                        todoCorrecto = false;
+                    }
+                } else if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("goTo")) {
 
-            } else if (tabla[ultimoNodo][columna].getAccion().equals("shift")) {
-                // System.out.println("SHIFT2");
-                if (!shift(actual, miPila, tabla[ultimoNodo][columna].getNoCaso())) {
-                    todoCorrecto = false;
+                } else if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("shift")) {
+                    // System.out.println("SHIFT2");
+                    if (!shift(actual, miPila, tabla[ultimoNodo][columna].getAcciones().get(noAccion).getNoCaso())) {
+                        todoCorrecto = false;
+                    }
                 }
             }
         } else {

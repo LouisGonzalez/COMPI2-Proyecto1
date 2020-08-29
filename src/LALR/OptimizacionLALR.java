@@ -6,6 +6,7 @@
 package LALR;
 
 import java.util.ArrayList;
+import pollitos.NodoAccion;
 import pollitos.NodoSimplificado;
 import pollitos.NodoTabla;
 import pollitos.Simbolos;
@@ -95,23 +96,28 @@ public class OptimizacionLALR {
         for (int i = 1; i < listSimbolos.size() + 2; i++) {
             if (tabla[idFila1][i] != null && tabla[idFila2][i] != null) {
 
-                if (tabla[idFila1][i].getAccion().equals(tabla[idFila2][i].getAccion())) {
-                    if (tabla[idFila1][i].getNoCaso() != tabla[idFila2][i].getNoCaso()) {
-                        if ((idFila1 == tabla[idFila1][i].getNoCaso() && idFila2 == tabla[idFila2][i].getNoCaso()) || (idFila1 == tabla[idFila2][i].getNoCaso() && idFila2 == tabla[idFila1][i].getNoCaso())) {
-                        } else {
-                            if (verificarPosibleVinculo(nodoActual, simplificados, tabla[idFila1][i].getNoCaso(), tabla[idFila2][i].getNoCaso(), primero)) {
+                if (tabla[idFila1][i].getAcciones().size() == 1 && tabla[idFila2][i].getAcciones().size() == 1) {
+                    if (tabla[idFila1][i].getAcciones().get(0).getAccion().equals(tabla[idFila2][i].getAcciones().get(0).getAccion())) {
+                        if (tabla[idFila1][i].getAcciones().get(0).getNoCaso() != tabla[idFila2][i].getAcciones().get(0).getNoCaso()) {
+                            if ((idFila1 == tabla[idFila1][i].getAcciones().get(0).getNoCaso() && idFila2 == tabla[idFila2][i].getAcciones().get(0).getNoCaso()) || (idFila1 == tabla[idFila2][i].getAcciones().get(0).getNoCaso() && idFila2 == tabla[idFila1][i].getAcciones().get(0).getNoCaso())) {
+                            } else {
+                                if (verificarPosibleVinculo(nodoActual, simplificados, tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso(), primero)) {
 
-                                if (!comparacionFilas(nodoActual, tabla, tabla[idFila1][i].getNoCaso(), tabla[idFila2][i].getNoCaso(), listSimbolos, listCasos, simplificados, false)) {
+                                    if (!comparacionFilas(nodoActual, tabla, tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso(), listSimbolos, listCasos, simplificados, false)) {
+                                        todoCorrecto = false;
+                                        break;
+                                    }
+                                } else {
+                                    System.out.println(nodoActual);
+                                    System.out.println("            NO ES CIERTO DONDE DDEBERDADD FALLO ES AQUI XED");
                                     todoCorrecto = false;
                                     break;
                                 }
-                            } else {
-                                System.out.println(nodoActual);
-                                System.out.println("            NO ES CIERTO DONDE DDEBERDADD FALLO ES AQUI XED");
-                                todoCorrecto = false;
-                                break;
                             }
                         }
+                    } else {
+                        todoCorrecto = false;
+                        break;
                     }
                 } else {
                     todoCorrecto = false;
@@ -133,18 +139,24 @@ public class OptimizacionLALR {
             }
         }
         return todoCorrecto;
-    }   
+    }
 
     //cambia el noCaso al simplificado dentro de cada coincidencia en la tabla del LALR
     public NodoTabla[][] cambiarCasosTabla(NodoTabla[][] tabla, int id, int idACambiar, ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos) {
         for (int i = 1; i < listCasos.size() + 2; i++) {
             for (int j = 1; j < listSimbolos.size() + 2; j++) {
                 if (tabla[i][j] != null) {
-                    if (!tabla[i][j].getAccion().equals("reduce")) {
-                        if (tabla[i][j].getNoCaso() == idACambiar) {
-                            tabla[i][j].setNoCaso(id);
+
+                    for (int k = 0; k < tabla[i][j].getAcciones().size(); k++) {
+                        if (!tabla[i][j].getAcciones().get(k).getAccion().equals("reduce")) {
+                            if (tabla[i][j].getAcciones().get(k).getNoCaso() != null) {
+                                if (tabla[i][j].getAcciones().get(k).getNoCaso() == idACambiar) {
+                                    tabla[i][j].getAcciones().get(k).setNoCaso(id);
+                                }
+                            } 
                         }
                     }
+
                 }
             }
         }
@@ -191,12 +203,13 @@ public class OptimizacionLALR {
     }
 
     //rellena las casillas en blanco que la otra fila si tenga ocupadas
-    public void rellenoCasillas(NodoTabla[][] tabla, int nodo1, int nodo2, ArrayList<Simbolos> listSimbolos){
+    public void rellenoCasillas(NodoTabla[][] tabla, int nodo1, int nodo2, ArrayList<Simbolos> listSimbolos) {
         for (int i = 1; i < listSimbolos.size() + 2; i++) {
-            if(tabla[nodo1][i] == null && tabla[nodo2][i] != null){
+            if (tabla[nodo1][i] == null && tabla[nodo2][i] != null) {
                 NodoTabla nuevo = new NodoTabla();
-                nuevo.setAccion(tabla[nodo2][i].getAccion());
-                nuevo.setNoCaso(tabla[nodo2][i].getNoCaso());
+                for (int j = 0; j < tabla[nodo2][i].getAcciones().size(); j++) {
+                    nuevo.getAcciones().add(new NodoAccion(tabla[nodo2][i].getAcciones().get(j).getAccion(), tabla[nodo2][i].getAcciones().get(j).getNoCaso()));
+                }
                 tabla[nodo1][i] = nuevo;
             }
         }

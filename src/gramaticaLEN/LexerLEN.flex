@@ -37,6 +37,7 @@ Espacio = {Salto} | {Espacio1}
     "autor"                                                         {return symbol(sym.autor);}
     "lanzamiento"                                                   {return symbol(sym.lanzamiento);}
     "extension"                                                     {return symbol(sym.extension);}
+    "RESULT"                                                        {return symbol(sym.result);}
     ":"                                                             {return symbol(sym.dos_puntos, new String(yytext()));}
     "."                                                             {return symbol(sym.punto, new String(yytext()));}
     ";"                                                             {return symbol(sym.punto_coma, new String(yytext()));}

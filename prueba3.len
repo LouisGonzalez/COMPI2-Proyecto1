@@ -6,21 +6,6 @@ extension: java;
 
 %% 
 
-List<String> listString=new ArrayList<>();
-
-public static void prueba(){
-	System.out.println("sasdfdasdfsdfsdfsdfsdddddddd");
-	
-}
-
-public void addString(String valor){
-         listString.add(valor); 
-}
-
-
-public Integer suma(Integer numero1,Integer numero2){
-          return numero1+numero2; 
-}
 
 
 %%

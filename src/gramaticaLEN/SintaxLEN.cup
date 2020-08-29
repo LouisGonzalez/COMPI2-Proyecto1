@@ -19,6 +19,8 @@ parser code {:
     public DatosLenguaje datos;
     public Lenguajes nuevo;
     public int cont1 = 1;
+    public int precedencia = 1;
+    public int precedencia2 = 1;
     
     public ArrayList<MisExpresiones> listExpresiones;
     public String tipoSimbolo = "";
@@ -81,11 +83,11 @@ parser code {:
              agrupacion_b, interrogacion, por, mas, comillas, parentesis_a, parentesis_b, guion, enter, tab, espacio,
              comentario, comentario_a, comentario_b, terminal1, noTerminal, tipoEntero, tipoReal, tipoCadena, cadena,
              numero, id, igual, letra, o, llave_a, llave_b, idMin, idMay, punto, caracter, resto, soloLetra, ampersand,
-             diagonal;
+             diagonal, result;
 
-    non terminal A, SIMBOLO, A53, COM, COM2, LETRA, LETRA2, CADENA, CADENA2, PALABRA, PALABRA2;
+    non terminal A, SIMBOLO, COM, COM2, LETRA, LETRA2, CADENA, CADENA2, PALABRA, PALABRA2, VAR;
 
-    non terminal String SIMBOLOS, SIMBOLOS2, CODIGO, CODIGO2;
+    non terminal String SIMBOLOS, SIMBOLOS2, CODIGO, CODIGO2, PRODUCCION, PRODUCCION2, RESULTADOS, A53;
 
     non terminal DatosLenguaje A1, A11;
 
@@ -110,7 +112,7 @@ parser code {:
    
     start with A;
 
-    A ::= A1:a {: if(a.getNombre()==null){ System.out.println("Falta atributo nombre"); } else { parser.nuevo.setDatos(a);  } :} separador A2:b {: parser.clase.nuevaClase("pruebaClase", b); :} separador A3:c {: parser.traspasarDatos3(c, parser.listTemporal); :} separador A4:d {: parser.traspasarDatos(d, parser.listSimbolos);     parser.listSimbolos.add(new Simbolos("Terminal", "$", "")); :} separador A5:e separador {: parser.cont1=1; parser.traspasarDatos2(e, parser.listEstados); :}
+    A ::= A1:a {: if(a.getNombre()==null){ System.out.println("Falta atributo nombre"); } else { parser.nuevo.setDatos(a);  } :} separador A2:b {: parser.clase.nuevaClase("pruebaClase", b); :} separador A3:c {: parser.traspasarDatos3(c, parser.listTemporal); :} separador A4:d {: parser.traspasarDatos(d, parser.listSimbolos);     parser.listSimbolos.add(new Simbolos("Terminal", "$", "", parser.precedencia)); :} separador A5:e separador {: parser.cont1=1; parser.traspasarDatos2(e, parser.listEstados); :}
 ;
     A1 ::= A11:a {: RESULT=a; :}
 ;
@@ -124,6 +126,7 @@ parser code {:
     |       {: RESULT=new DatosLenguaje(); :}
 ;   
     A2 ::= CODIGO:a {: RESULT=a.toString(); :}
+    |
 ;
     A3 ::= soloLetra:b igual A31:a punto_coma A35:c {: MisExpresiones nuevo = new MisExpresiones(b.toString(), a, ""); nuevo.setPrioridad(c.size());  c.add(nuevo); RESULT=c;  :} 
     |      idMin:b igual A31:a punto_coma A35:c {: MisExpresiones nuevo = new MisExpresiones(b.toString(), a, ""); nuevo.setPrioridad(c.size()); c.add(nuevo);  RESULT=c;  :}
@@ -168,7 +171,7 @@ parser code {:
 ;
     A4 ::= COM2 A41:a A42:b {: parser.traspasarDatos(b,a); RESULT=a; :}
 ;
-    A41 ::= terminal1 TIPO:a {: parser.tipoSimbolo=a;:} idMin:b A411:c punto_coma COM2 A41:d {:  parser.traspasarDatos(c,d); if(!parser.verificador4.verificarIdentificador(d, b.toString())){  d.add(new Simbolos("Terminal", b.toString(), parser.tipoSimbolo)); } RESULT=d; :}
+    A41 ::= terminal1 TIPO:a {: parser.tipoSimbolo=a;:} idMin:b A411:c punto_coma COM2 A41:d {:  parser.traspasarDatos(c,d); if(!parser.verificador4.verificarIdentificador(d, b.toString())){  d.add(new Simbolos("Terminal", b.toString(), parser.tipoSimbolo, parser.precedencia)); parser.precedencia++; } RESULT=d; :}
     |   {: RESULT=new ArrayList<>(); :}       
 ;
     TIPO ::= tipoEntero:a {: RESULT=a.toString(); :}
@@ -176,13 +179,13 @@ parser code {:
     |        tipoCadena:a {: RESULT=a.toString(); :}
     |        {: RESULT=""; :}
 ;
-    A411 ::= coma idMin:a A411:b {: if(!parser.verificador4.verificarIdentificador(b, a.toString())){  b.add(new Simbolos("Terminal", a.toString(), parser.tipoSimbolo)); } RESULT=b; :} 
+    A411 ::= coma idMin:a A411:b {: if(!parser.verificador4.verificarIdentificador(b, a.toString())){  b.add(new Simbolos("Terminal", a.toString(), parser.tipoSimbolo, parser.precedencia)); parser.precedencia++; } RESULT=b; :} 
     |   {: RESULT=new ArrayList<>(); :}
 ;
-    A42 ::= noTerminal TIPO:a {: parser.tipoSimbolo=a; :}  idMay:b A421:c punto_coma COM2 A42:d {: parser.traspasarDatos(c,d);  if(!parser.verificador4.verificarIdentificador(d, b.toString())){ d.add(new Simbolos("NoTerminal", b.toString(), parser.tipoSimbolo)); } RESULT=d; :}
+    A42 ::= noTerminal TIPO:a {: parser.tipoSimbolo=a; :}  idMay:b A421:c punto_coma COM2 A42:d {: parser.traspasarDatos(c,d);  if(!parser.verificador4.verificarIdentificador(d, b.toString())){ d.add(new Simbolos("NoTerminal", b.toString(), parser.tipoSimbolo, parser.precedencia2)); parser.precedencia2++; } RESULT=d; :}
     |   {: RESULT=new ArrayList<>(); :}     
 ;
-    A421 ::= coma idMay:a A421:b {: if(!parser.verificador4.verificarIdentificador(b, a.toString())){ b.add(new Simbolos("NoTerminal", a.toString(), parser.tipoSimbolo)); } RESULT=b; :}
+    A421 ::= coma idMay:a A421:b {: if(!parser.verificador4.verificarIdentificador(b, a.toString())){ b.add(new Simbolos("NoTerminal", a.toString(), parser.tipoSimbolo, parser.precedencia2)); parser.precedencia2++; } RESULT=b; :}
     |   {: RESULT=new ArrayList<>(); :}
 ; 
     A5 ::= idMay:a dos_puntos dos_puntos A51:b A53:c punto_coma A5:d {: if(parser.ver5.verificarEstado(parser.listSimbolos, a.toString())){ d.add(new Estados(parser.cont1,a.toString(), b)); parser.cont1++; } RESULT=d; :}
@@ -191,22 +194,29 @@ parser code {:
     |      error:a A5:b {: RESULT=b; :}
     |      {: RESULT=new ArrayList<>(); :}
 ;
-    A51 ::= soloLetra:a SIMBOLO A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
-    |       idMin:a SIMBOLO A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } }  RESULT=b; :}
-    |       idMay:a SIMBOLO A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
+    A51 ::= soloLetra:a VAR A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
+    |       idMin:a VAR A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } }  RESULT=b; :}
+    |       idMay:a VAR A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
+;
+    VAR ::= dos_puntos idMin:a {: :}
+    |       dos_puntos soloLetra
+    |
 ;
     SIMBOLO ::= dos_puntos soloLetra
     |           dos_puntos idMin
     |           dos_puntos idMay
     |
 ;
-    A52 ::= soloLetra:a SIMBOLO A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
-    |       idMin:a SIMBOLO A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, ")")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
-    |       idMay:a SIMBOLO A52:b {:  if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null,"*")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b;  :}
+    A52 ::= soloLetra:a VAR  A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, "&")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
+    |       idMin:a VAR A52:b {: if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null, ")")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b; :}
+    |       idMay:a VAR A52:b {:  if(parser.ver5.verificarId(parser.listSimbolos, a.toString())){ if(parser.ver5.verificarTerminal(parser.listSimbolos, a.toString())){ b.add(new Expresiones(a.toString(), true, null,"*")); } else { b.add(new Expresiones(a.toString(), false, null, null)); } } RESULT=b;  :}
     |       {: RESULT=new ArrayList<>(); :}
 ;
-    A53 ::= llave_a {: /*PENDIENTE*/ :} llave_b
-    |
+    A53 ::= llave_a RESULTADOS:a llave_b {: RESULT=a.toString();  :}
+    |       llave_a llave_b {:  RESULT = ""; :}
+    |       {: RESULT=""; :}
+;
+    RESULTADOS ::= result igual PRODUCCION:a punto_coma {: RESULT=a.toString(); :}
 ;
     LETRA ::= LETRA2:a idMin:b {: RESULT=a.toString()+b.toString(); :}
     |         LETRA2:a idMay:b {: RESULT=a.toString()+b.toString(); :}
@@ -281,6 +291,40 @@ parser code {:
     |             diagonal:a {: RESULT=a.toString(); :}
     |             o:a {: RESULT=a.toString(); :}
     |             ampersand:a {: RESULT=a.toString(); :}
+;
+    PRODUCCION ::= PRODUCCION:a resto:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          PRODUCCION:a PRODUCCION2:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          PRODUCCION:a soloLetra:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          PRODUCCION:a idMin:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          PRODUCCION:a idMay:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          PRODUCCION:a numero:b {: String devuelto = a+" "+b; RESULT=devuelto; :}
+    |          PRODUCCION:a COM
+    |          resto:a {: RESULT=a.toString(); :}
+    |          PRODUCCION2:a {: RESULT=a.toString(); :}
+    |          numero:a {: RESULT=a.toString(); :}
+    |          soloLetra:a {: RESULT=a.toString(); :}
+    |          idMin:a {: RESULT=a.toString(); :}
+    |          idMay:a {: RESULT=a.toString(); :}
+    |          COM
+;
+    PRODUCCION2 ::= dos_puntos:a {: RESULT=a.toString(); :}
+    |           punto:a {: RESULT=a.toString(); :}
+    |           agrupacion_a:a {: RESULT=a.toString(); :}
+    |           agrupacion_b:a {: RESULT=a.toString(); :}
+    |           interrogacion:a {: RESULT=a.toString(); :}
+    |           por:a {: RESULT=a.toString(); :}
+    |           mas:a {: RESULT=a.toString(); :}
+    |           coma:a {: RESULT=a.toString(); :}
+    |           parentesis_a:a {: RESULT=a.toString(); :}
+    |           parentesis_b:a {: RESULT=a.toString(); :}
+    |           llave_a:a {: RESULT=a.toString()+"\n"; :}
+    |           llave_b:a {: RESULT=a.toString()+"\n"; :}
+    |           guion:a {: RESULT=a.toString(); :}
+    |           igual:a {: RESULT=a.toString(); :}
+    |           diagonal:a {: RESULT=a.toString(); :}
+    |           comillas:a {: RESULT=a.toString(); :}
+    |           o:a {: RESULT=a.toString(); :}
+    |           ampersand:a {: RESULT=a.toString(); :}
 ;
     PALABRA ::= PALABRA2:a soloLetra:b {: RESULT=a.toString()+b.toString(); :}
     |           PALABRA2:a idMin:b {: RESULT=a.toString()+b.toString(); :}

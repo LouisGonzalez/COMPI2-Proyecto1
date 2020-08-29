@@ -8,6 +8,8 @@ package interfaz;
 import Arbol.GeneracionArbol;
 import Arbol.NodoArbol;
 import Automata.Transiciones;
+import Graficas.GraficaPila;
+import Graficas.GraficaTabla;
 import LALR.Carril;
 import LALR.Estados;
 import LALR.FuncionesTabla;
@@ -35,6 +37,7 @@ import pollitos.Token;
  */
 public class PanelHojas extends javax.swing.JPanel {
 
+    public static String pilaHTML = "";
     private NumeracionLineas numeracion;
     private ArrayList<MisExpresiones> listExpresiones2 = new ArrayList<>();
     private ArrayList<Estados> listEstados;
@@ -51,6 +54,9 @@ public class PanelHojas extends javax.swing.JPanel {
     private OptimizacionLALR lalr = new OptimizacionLALR();
     
     private ArrayList<Token> listTokens = new ArrayList<>();
+    
+    private GraficaTabla graficaTabla = new GraficaTabla();
+    private GraficaPila graficaPila = new GraficaPila();
 
     private NodoArbol primero = null;
     MisExpresiones unico = null;
@@ -90,6 +96,7 @@ public class PanelHojas extends javax.swing.JPanel {
         txtChar = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         estado = new javax.swing.JTextArea();
+        jButton5 = new javax.swing.JButton();
 
         txtCodigo.setColumns(20);
         txtCodigo.setRows(5);
@@ -147,6 +154,13 @@ public class PanelHojas extends javax.swing.JPanel {
         estado.setRows(5);
         jScrollPane2.setViewportView(estado);
 
+        jButton5.setText("preubagrafica");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -179,6 +193,8 @@ public class PanelHojas extends javax.swing.JPanel {
                         .addGap(25, 25, 25))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton5)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtChar, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -211,7 +227,9 @@ public class PanelHojas extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtChar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton4))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton4)
+                            .addComponent(jButton5)))
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -325,11 +343,13 @@ public class PanelHojas extends javax.swing.JPanel {
         for (int j = 0; j < listTokens.size(); j++) {
             System.out.println("Cadena:  " + listTokens.get(j).getIdentificador()+" "+listTokens.get(j).getValor().toString());
         }
-      //  System.out.println(miTabla[0][1].getSimbolo().getIdentificador());
        funciones.transiciones(listTokens, miTabla, listSimbolos, listEstados);
-        
+       graficaPila.generarPilaHTML();
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        graficaTabla.generarTablaHTML(listSimbolos, miTabla, listCasos);
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton diagrama;
@@ -339,6 +359,7 @@ public class PanelHojas extends javax.swing.JPanel {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

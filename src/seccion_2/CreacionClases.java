@@ -35,7 +35,7 @@ public class CreacionClases {
         r.addClass(nombreClase, codigo);
         r.compile();
 
-        MethodInvocationUtils.invokeStaticMethod(r.getCompiledClass(nombreClase), "prueba");
+  //      MethodInvocationUtils.invokeStaticMethod(r.getCompiledClass(nombreClase), "prueba");
     }
 
     public static void pruebaJanino() {

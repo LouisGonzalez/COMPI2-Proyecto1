@@ -6,6 +6,7 @@
 package LALR;
 
 import java.util.ArrayList;
+import pollitos.NodoAccion;
 import pollitos.NodoTabla;
 import pollitos.Simbolos;
 
@@ -50,17 +51,18 @@ public class Tabla {
         }
         return tabla;
     }
-    
-    public NodoTabla[][] crearEstadoAceptacion(NodoTabla[][] tabla, ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos){
+
+    public NodoTabla[][] crearEstadoAceptacion(NodoTabla[][] tabla, ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos) {
         for (int i = 0; i < listCasos.size(); i++) {
             for (int j = 0; j < listCasos.get(i).getListEstados().get(0).getMisExpresiones().size(); j++) {
                 Integer aceptacion = gnTabla.verUbicacionPunto(listCasos.get(i).getListEstados().get(0).getMisExpresiones());
-                if(aceptacion != null){
-                    if(listCasos.get(i).getListEstados().get(0).getMisExpresiones().get(aceptacion).getIdentificador().equals("$")){
+                if (aceptacion != null) {
+                    if (listCasos.get(i).getListEstados().get(0).getMisExpresiones().get(aceptacion).getIdentificador().equals("$")) {
                         Integer columna = determinarColumna("$", tabla, listSimbolos);
-                        if(columna != null){
+                        if (columna != null) {
                             NodoTabla nuevo = new NodoTabla();
-                            nuevo.setAccion("aceptacion");
+                            nuevo.getAcciones().add(new NodoAccion("aceptacion", null));
+
                             tabla[listCasos.get(i).getIdCaso()][columna] = nuevo;
                             break;
                         }
@@ -78,15 +80,27 @@ public class Tabla {
                 //System.out.println("            "+listCasos.get(i).getListVinculos().get(j).getVinculo()+" "+listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo());
                 Integer columna = determinarColumna(listCasos.get(i).getListVinculos().get(j).getVinculo().toString(), tabla, listSimbolos);
                 if (determinarTipoSimbolo(listSimbolos, listCasos.get(i).getListVinculos().get(j).getVinculo().toString())) {
-                    NodoTabla nuevo = new NodoTabla();
-                    nuevo.setNoCaso(listCasos.get(i).getIdCaso());
-                    nuevo.setAccion("shift");
-                    tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] = nuevo;
+
+                    if (tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] == null) {
+                        NodoTabla nuevo = new NodoTabla();
+                        nuevo.getAcciones().add(new NodoAccion("shift", listCasos.get(i).getIdCaso()));
+
+                        tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] = nuevo;
+
+                    } else {
+                        tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna].getAcciones().add(new NodoAccion("shift", listCasos.get(i).getIdCaso()));
+                    }
+
                 } else {
-                    NodoTabla nuevo = new NodoTabla();
-                    nuevo.setNoCaso(listCasos.get(i).getIdCaso());
-                    nuevo.setAccion("goTo");
-                    tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] = nuevo;
+                    if (tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] == null) {
+                        NodoTabla nuevo = new NodoTabla();
+
+                        nuevo.getAcciones().add(new NodoAccion("goTo", listCasos.get(i).getIdCaso()));
+                        tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] = nuevo;
+                    } else {
+                        tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna].getAcciones().add(new NodoAccion("goTo", listCasos.get(i).getIdCaso()));
+                    }
+
                 }
             }
         }
@@ -103,10 +117,14 @@ public class Tabla {
                             int noEstado = listCasos.get(i).getListEstados().get(j).getNoEstado();
                             for (int k = 0; k < listCasos.get(i).getListEstados().get(j).getMisCarriles().size(); k++) {
                                 Integer columna = determinarColumna(listCasos.get(i).getListEstados().get(j).getMisCarriles().get(k).getId(), tabla, listSimbolos);
-                                NodoTabla nuevo = new NodoTabla();
-                                nuevo.setAccion("reduce");
-                                nuevo.setNoCaso(noEstado);
-                                tabla[listCasos.get(i).getIdCaso()][columna] = nuevo;
+                                if (tabla[listCasos.get(i).getIdCaso()][columna] == null) {
+                                    NodoTabla nuevo = new NodoTabla();
+                                    nuevo.getAcciones().add(new NodoAccion("reduce", noEstado));
+                                    tabla[listCasos.get(i).getIdCaso()][columna] = nuevo;
+
+                                } else {
+                                    tabla[listCasos.get(i).getIdCaso()][columna].getAcciones().add(new NodoAccion("reduce", noEstado));
+                                }
 
                             }
                         }
@@ -153,12 +171,15 @@ public class Tabla {
                 System.out.println("Caso no: " + listCasos.get(i).getIdCaso());
                 for (int j = 0; j < listSimbolos.size(); j++) {
                     if (tabla[i + 1][j + 1] != null && tabla[i + 1][j + 1] != null) {
-                        System.out.println("    " + tabla[i + 1][j + 1].getAccion() + " " + tabla[i + 1][j + 1].getNoCaso()+ " "+tabla[0][j+1].getSimbolo().getIdentificador());
+                        String acciones = "";
+                        for (int k = 0; k < tabla[i + 1][j + 1].getAcciones().size(); k++) {
+                            acciones += "    " + tabla[i + 1][j + 1].getAcciones().get(k).getAccion() + "  " + tabla[i + 1][j + 1].getAcciones().get(k).getNoCaso() + " " + tabla[0][j + 1].getSimbolo().getIdentificador()+" |";
+                        }
+                        System.out.println(acciones);
                     }
                 }
             }
         }
     }
-
 
 }

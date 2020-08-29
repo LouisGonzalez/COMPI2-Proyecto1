@@ -22,6 +22,7 @@ public class Expresiones implements Serializable {
     private Boolean punto = null;
     private Boolean puntoFinal = false;
     private NodoArbol expresion;
+    private String varAsociada;
 
     
     public Expresiones(Expresiones exp){
@@ -38,6 +39,15 @@ public class Expresiones implements Serializable {
         this.esTerminal = esTerminal;
         this.misCaracteres = misCaracteres;
         this.expresion = expresion;
+    //    this.varAsociada = varAsociada;
+    }
+
+    public String getVarAsociada() {
+        return varAsociada;
+    }
+
+    public void setVarAsociada(String varAsociada) {
+        this.varAsociada = varAsociada;
     }
 
     public NodoArbol getExpresion() {
