@@ -53,9 +53,9 @@ public class GeneracionTabla {
         }
         ArrayList<Estados> listAux = new ArrayList<>();
         ArrayList<Expresiones> expInicial = new ArrayList<>();
-        expInicial.add(new Expresiones(listEstados.get(listEstados.size() - 1).getIdentificador(), false, null, null));
-        expInicial.add(new Expresiones("$", true, null, null));
-        listAux.add(new Estados(0, listEstados.get(listEstados.size() - 1).getIdentificador() + "I", expInicial));
+        expInicial.add(new Expresiones(listEstados.get(listEstados.size() - 1).getIdentificador(), false, null, null, null));
+        expInicial.add(new Expresiones("$", true, null, null, null));
+        listAux.add(new Estados(0, listEstados.get(listEstados.size() - 1).getIdentificador() + "I", expInicial, null));
         for (int i = listEstados.size() - 1; i >= 0; i--) {
             listAux.add(listEstados.get(i));
         }
@@ -104,7 +104,7 @@ public class GeneracionTabla {
                 if (puntoUbicacion == null) {
                     if (!finTransicion(nuevo.getMisExpresiones())) {
                         if (verificarEstadoLambda(nuevo.getMisExpresiones())) {
-                            nuevo.getMisExpresiones().add(new Expresiones("lambda", true, null, null));
+                            nuevo.getMisExpresiones().add(new Expresiones("lambda", true, null, null, null));
                             nuevo.getMisExpresiones().get(0).setPunto(true);
                             ArrayList<Expresiones> expresionAux = creacionExpresionAux(nuevo, 1);
                             nuevo.setMisCarriles(agregarCarriles(listEstados, expresionAux, estadoPadre));

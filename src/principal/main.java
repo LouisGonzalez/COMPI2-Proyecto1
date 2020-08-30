@@ -32,16 +32,18 @@ public class main {
         
           String codigo = "public class clasePrueba{\n"
                   + "int a = 1;\n"
-            + "public void mains(){\n"
+            + "public Integer mains(){\n"
             + "     System.out.println(\"Hola mundo\");\n"
-                  + "System.out.println(retorno());\n"
+                  + "System.out.println(retorno());"
+                  + "int val = retorno();"
+                  + "return val;\n"
             + "}\n"
                   + "public Integer retorno(){\n"
                   + "return 7;\n"
                   + "}" 
             + "}";
           
-          CreacionClases.pruebaJanino2(codigo);
+             CreacionClases.pruebaJanino2(codigo);
         
     }
     

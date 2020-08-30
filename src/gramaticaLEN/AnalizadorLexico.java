@@ -873,7 +873,7 @@ public class AnalizadorLexico implements java_cup.runtime.Scanner {
             }
           case 77: break;
           case 34: 
-            { return symbol(sym.tipoReal);
+            { return symbol(sym.tipoReal, new String(yytext()));
             }
           case 78: break;
           case 35: 
@@ -885,7 +885,7 @@ public class AnalizadorLexico implements java_cup.runtime.Scanner {
             }
           case 80: break;
           case 37: 
-            { return symbol(sym.tipoEntero);
+            { return symbol(sym.tipoEntero, new String(yytext()));
             }
           case 81: break;
           case 38: 
@@ -893,7 +893,7 @@ public class AnalizadorLexico implements java_cup.runtime.Scanner {
             }
           case 82: break;
           case 39: 
-            { return symbol(sym.tipoCadena);
+            { return symbol(sym.tipoCadena, new String(yytext()));
             }
           case 83: break;
           case 40: 

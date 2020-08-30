@@ -7,6 +7,7 @@ package LALR;
 
 import Graficas.GraficaPila;
 import java.util.ArrayList;
+import pollitos.ExpresionesAux;
 import pollitos.NodoTabla;
 import pollitos.Pila;
 import pollitos.Simbolos;
@@ -21,6 +22,9 @@ public class FuncionesTabla {
     private Integer noFila = null;
     private Precedencia precedencia = new Precedencia();
     private GraficaPila grafica = new GraficaPila();
+    private String variables = "";
+    private CodigoJava codigo = new CodigoJava();
+    private Tipado tipado = new Tipado();
 
     public void transiciones(ArrayList<Token> listTokens, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos, ArrayList<Estados> listEstados) {
         ArrayList<Pila> miPila = new ArrayList<>();
@@ -28,7 +32,7 @@ public class FuncionesTabla {
         miPila.add(new Pila(null, 1));
         mostrarPila(miPila);
         grafica.tablaPila(miPila);
-        listTokens.add(new Token("$", "aceptacion", "$"));
+        listTokens.add(new Token("$", "aceptacion", "$", null));
         noFila = 1;
         for (int i = 0; i < listTokens.size(); i++) {
             if (listTokens.get(i).getTipo() != null) {
@@ -94,11 +98,12 @@ public class FuncionesTabla {
     public boolean reduce(Token actual, ArrayList<Pila> miPila, ArrayList<Estados> listEstados, int casoTransicion, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos) {
         boolean todoCorrecto = true;
         Estados analizado = buscarEstado(listEstados, casoTransicion);
-        ArrayList<String> expresiones = new ArrayList<>();
+        ArrayList<ExpresionesAux> expresiones = new ArrayList<>();
         for (int i = 0; i < analizado.getMisExpresiones().size(); i++) {
-            expresiones.add(analizado.getMisExpresiones().get(i).getIdentificador());
+            //   expresiones.add(analizado.getMisExpresiones().get(i).getIdentificador());
+            expresiones.add(new ExpresionesAux(analizado.getMisExpresiones().get(i).getIdentificador(), analizado.getMisExpresiones().get(i).getVarAsociada()));
         }
-        if (desapilarReduce(miPila, listEstados, expresiones)) {
+        if (desapilarReduce(miPila, listEstados, expresiones, listSimbolos)) {
             //        System.out.println(miPila.size() +"   "+expresiones.size()+"                 FASFDSFSDFS");
             for (int i = (miPila.size() - expresiones.size()); i < miPila.size(); i++) {
                 miPila.remove(i);
@@ -108,10 +113,28 @@ public class FuncionesTabla {
             todoCorrecto = false;
         }
         if (todoCorrecto) {
-            mostrarPila(miPila);
-            grafica.tablaPila(miPila);
+            //   mostrarPila(miPila);
+            //  grafica.tablaPila(miPila);
             System.out.println("--------------------------------------------------------------------------");
-            Token nuevo = new Token(analizado.getIdentificador(), null, null);
+            Token nuevo = new Token(analizado.getIdentificador(), null, null, analizado.getNoEstado());
+            System.out.println(variables);
+            System.out.println(analizado.getResult());
+            String tipoDev = tipado.determinarTipo(analizado.getIdentificador(), listSimbolos);
+            System.out.println(tipoDev + "        SOY EL TIPO DE DEVOLUCION DE " + analizado.getIdentificador());
+            if (tipoDev.equals("entero")) {
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Integer"));
+
+            } else if (tipoDev.equals("cadena")) {
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "String"));
+
+            } else if (tipoDev.equals("real")) {
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Double"));
+            } else if (tipoDev.equals("")) {
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "void"));
+
+            }
+
+            variables = "";
             nuevo.setEsTerminal(false);
             Pila nuevo2 = new Pila(nuevo, null);
             Integer numPila = null;
@@ -180,13 +203,27 @@ public class FuncionesTabla {
 
     }
 
-    public boolean desapilarReduce(ArrayList<Pila> miPila, ArrayList<Estados> listEstados, ArrayList<String> expresiones) {
+    public boolean desapilarReduce(ArrayList<Pila> miPila, ArrayList<Estados> listEstados, ArrayList<ExpresionesAux> expresiones, ArrayList<Simbolos> listSimbolos) {
         boolean sePuede = true;
         int cont = 1;
         for (int i = miPila.size() - 1; i >= (miPila.size() - expresiones.size()); i--) {
-            if (!miPila.get(i).getToken().getIdentificador().equals(expresiones.get(expresiones.size() - cont))) {
+            if (!miPila.get(i).getToken().getIdentificador().equals(expresiones.get(expresiones.size() - cont).getId())) {
                 sePuede = false;
                 break;
+            } else {
+                if (expresiones.get(expresiones.size() - cont).getRepresentante() != null) {
+                    String tipoVar = tipado.determinarTipo(miPila.get(i).getToken().getIdentificador(), listSimbolos);
+                        if (tipoVar.equals("entero")) {
+                            variables += "Integer " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= " + miPila.get(i).getToken().getValor() + ";\n";
+                        } else if (tipoVar.equals("real")) {
+                            variables += "Double " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= " + miPila.get(i).getToken().getValor() + ";\n";
+                        } else if (tipoVar.equals("cadena")) {
+                            variables += "String " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= " + miPila.get(i).getToken().getValor() + ";\n";
+                        } else if(tipoVar.equals("")){
+                            variables += "Object " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= " + miPila.get(i).getToken().getValor() + ";\n";
+                        }
+                    
+                }
             }
             cont++;
         }

@@ -65,9 +65,9 @@ Espacio = {Salto} | {Espacio1}
     "*/"                                                            {return symbol(sym.comentario_b);}
     "terminal"                                                      {return symbol(sym.terminal1);}
     "no terminal"                                                   {return symbol(sym.noTerminal);}
-    "entero"                                                        {return symbol(sym.tipoEntero);}
-    "real"                                                          {return symbol(sym.tipoReal);}
-    "cadena"                                                        {return symbol(sym.tipoCadena);}
+    "entero"                                                        {return symbol(sym.tipoEntero, new String(yytext()));}
+    "real"                                                          {return symbol(sym.tipoReal, new String(yytext()));}
+    "cadena"                                                        {return symbol(sym.tipoCadena, new String(yytext()));}
     "id"                                                                {return symbol(sym.id);}
     {Numero}+                                                       {return symbol(sym.numero, new Integer(yytext()));}
     ({LetraMin})({LetraMin}|{Numero})*                              {return symbol(sym.idMin, new String(yytext()));}

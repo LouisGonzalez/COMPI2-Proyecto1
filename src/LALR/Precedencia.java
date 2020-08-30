@@ -23,7 +23,7 @@ public class Precedencia {
         if (ultimoToken != null) {
             int presUltimo = verPrecedencia(listSimbolos, ultimoToken.getIdentificador());
             int presActual = verPrecedencia(listSimbolos, tokenActual.getIdentificador());
-            if (presActual > presUltimo) {
+            if (presActual < presUltimo) {
                 //se toma el camino shift
                 boolean hayShift = false;
                 for (int i = 0; i < tabla[fila][columna].getAcciones().size(); i++) {

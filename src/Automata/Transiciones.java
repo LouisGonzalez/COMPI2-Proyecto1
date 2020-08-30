@@ -75,7 +75,7 @@ public class Transiciones implements Serializable {
                 for (int i = 0; i <= iterador; i++) {
                     textoError += texto.charAt(i);
                 }
-                Token nuevo = new Token(null, "error", textoError);
+                Token nuevo = new Token(null, "error", textoError, null);
                 listTokens.add(nuevo);
                 
                 //AQUI INGRESO UN TOKEN DE TIPO ERROR PARA EL ANALIZADOR SINTACTICO Y QUE AHI LO MUESTRE :DDD
@@ -154,12 +154,12 @@ public class Transiciones implements Serializable {
                     }
                 }
             }
-            Token miToken = new Token(token, null, cadena);
+            Token miToken = new Token(token, null, cadena, null);
 
             //    System.out.println("el token devuelto es un token: " + miToken.getIdentificador());
             listTokens.add(miToken);
         } else {
-            Token miToken = new Token(aceptacion.getConductores().get(0).getId(), null, cadena);
+            Token miToken = new Token(aceptacion.getConductores().get(0).getId(), null, cadena, null);
             listTokens.add(miToken);
             //   System.out.println("el token devuelto es un token: " + miToken.getIdentificador());
         }

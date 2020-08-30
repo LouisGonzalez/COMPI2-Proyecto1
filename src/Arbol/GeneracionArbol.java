@@ -345,7 +345,7 @@ public class GeneracionArbol {
             System.out.println("El nodo padre de todos es: " + nodo.getTipo());
         }
         if (nodo.getNodo1() != null) {
-            System.out.println("El nodo derecho de " + nodo.getTipo() + " es: " + nodo.getNodo1().getTipo() + "  id: " + nodo.getNodo1().getNumero() + " nulabilidad: " + nodo.getNodo1().isNulabilidad());
+            System.out.println("El nodo derecho de " + nodo.getTipo() + " es: " + nodo.getNodo1().getTipo() + "  id: " + nodo.getNodo1().getNumero() + " nulabilidad: " + nodo.getNodo1().isNulabilidad()+" simbolo: "+nodo.getNodo1().getCaracteres());
             String primeros = "", siguientes = "";
             for (int i = 0; i < nodo.getNodo1().getPrimeros().size(); i++) {
                 primeros += nodo.getNodo1().getPrimeros().get(i).getNumero();
@@ -358,7 +358,7 @@ public class GeneracionArbol {
             recorrerArbol(nodo.getNodo1(), 1);
         }
         if (nodo.getNodo2() != null) {
-            System.out.println("El nodo izquierdo de " + nodo.getTipo() + " es: " + nodo.getNodo2().getTipo() + " id: " + nodo.getNodo2().getNumero() + " nulabilidad: " + nodo.getNodo2().isNulabilidad());
+            System.out.println("El nodo izquierdo de " + nodo.getTipo() + " es: " + nodo.getNodo2().getTipo() + " id: " + nodo.getNodo2().getNumero() + " nulabilidad: " + nodo.getNodo2().isNulabilidad()+" simbolo: "+nodo.getNodo2().getCaracteres());
             String primeros = "", siguientes = "";
             for (int i = 0; i < nodo.getNodo2().getPrimeros().size(); i++) {
                 primeros += nodo.getNodo2().getPrimeros().get(i).getNumero();

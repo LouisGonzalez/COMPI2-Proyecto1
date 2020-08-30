@@ -20,6 +20,7 @@ public class Estados implements Serializable {
     private ArrayList<Expresiones> misExpresiones;
     private ArrayList<Carril> misCarriles = new ArrayList<>();
     private boolean simplificado = false;
+    private String result;
 
     public Estados(){
         
@@ -33,10 +34,19 @@ public class Estados implements Serializable {
         simplificado = estado.simplificado;
     }
   
-    public Estados(int noEstado, String identificador, ArrayList<Expresiones> misExpresiones) {
+    public Estados(int noEstado, String identificador, ArrayList<Expresiones> misExpresiones, String result) {
         this.identificador = identificador;
         this.misExpresiones = misExpresiones;
         this.noEstado = noEstado;
+        this.result = result;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
     }
 
     public boolean isSimplificado() {

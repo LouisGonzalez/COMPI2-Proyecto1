@@ -62,20 +62,20 @@ public class CreacionClases {
             + "}\n\n"
             + "}";
     
-    public static void pruebaJanino2(String codigo){
+    public static Object pruebaJanino2(String codigo){
         SimpleCompiler compiler = new SimpleCompiler();
+        Object resultado = null;
         try {
             compiler.cook(new StringReader(codigo));
             Class c1 = compiler.getClassLoader().loadClass("clasePrueba");
             Object arne = c1.newInstance();
             Method doWork = c1.getDeclaredMethod("mains");
-            Object resultado = doWork.invoke(arne, new Object[0]);
+            resultado = doWork.invoke(arne, new Object[0]);
             System.out.println(resultado);
-            
         } catch (CompileException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(CreacionClases.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+        return resultado;
     }
 
 }

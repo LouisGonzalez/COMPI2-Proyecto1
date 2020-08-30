@@ -38,17 +38,19 @@ hola = "hola";
 
 %% 
 
-terminal por, hola, enteros; /* Significa que cuando se encuentre este token deberá ser ignorado */
+terminal por, hola; /* Significa que cuando se encuentre este token deberá ser ignorado */
 terminal ida, reals, mas, menos;
+terminal entero enteros;
 
-no terminal S, V, E;
+no terminal S, V;
+no terminal entero E;
 
 %%
 
-S :: E; 
-E :: E mas E;
-E :: E menos E; 
-E :: E por E;
-E :: enteros;
+S :: E:a { System.out.println(a+"  el valor es"); };
+E :: E:a mas E:b { RESULT=a+b; };
+E :: E:a menos E:b { RESULT=a-b; };
+E :: E:a por E:b { RESULT=a*b; };
+E :: enteros:a { RESULT=a; };
 
 %%

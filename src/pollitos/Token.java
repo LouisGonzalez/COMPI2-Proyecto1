@@ -12,16 +12,35 @@ package pollitos;
 public class Token {
 
     private String identificador;
+    private Integer noEstado;
     private String tipo;
     private Object valor;
     private boolean esTerminal = true;
-
-    public Token(String identificador, String tipo, Object valor) {
+    private String idTerminal;
+    
+    public Token(String identificador, String tipo, Object valor, Integer noEstado) {
         this.identificador = identificador;
         this.tipo = tipo;
         this.valor = valor;
+        this.noEstado = noEstado;
     }
 
+    public String getIdTerminal() {
+        return idTerminal;
+    }
+
+    public void setIdTerminal(String idTerminal) {
+        this.idTerminal = idTerminal;
+    }
+
+    public Integer getNoEstado() {
+        return noEstado;
+    }
+
+    public void setNoEstado(Integer noEstado) {
+        this.noEstado = noEstado;
+    }
+    
     public boolean isEsTerminal() {
         return esTerminal;
     }

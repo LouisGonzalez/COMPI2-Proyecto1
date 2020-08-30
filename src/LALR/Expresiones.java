@@ -32,14 +32,15 @@ public class Expresiones implements Serializable {
         punto = exp.punto;
         puntoFinal = exp.puntoFinal;
         expresion = exp.expresion;
+        varAsociada = exp.varAsociada;
     }
     
-    public Expresiones(String identificador, Boolean esTerminal, NodoArbol expresion, String misCaracteres) {
+    public Expresiones(String identificador, Boolean esTerminal, NodoArbol expresion, String misCaracteres, String varAsociada) {
         this.identificador = identificador;
         this.esTerminal = esTerminal;
         this.misCaracteres = misCaracteres;
         this.expresion = expresion;
-    //    this.varAsociada = varAsociada;
+            this.varAsociada = varAsociada;
     }
 
     public String getVarAsociada() {

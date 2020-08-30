@@ -6,6 +6,8 @@
 package interfaz;
 
 import Arbol.GeneracionArbol;
+import Graficas.GraficaPila;
+import Graficas.GraficaTabla;
 import LALR.Estados;
 import LALR.GeneracionTabla;
 import LALR.NodoCaso;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import pollitos.Lenguajes;
 import pollitos.MisExpresiones;
 
@@ -44,10 +47,13 @@ public class Inicio extends javax.swing.JFrame {
     private OptimizacionLALR lalr = new OptimizacionLALR();
     private Guardado repositorio = new Guardado();
 
+    /*GRAFICAS*/
+    private GraficaTabla gfTabla = new GraficaTabla();
+
     private NuevaHoja nueva = new NuevaHoja();
     String a = "\\n";
     private final String REPOSITORIO = "/home/luisitopapurey/Escritorio/Compiladores 2/Proyecto 1/Repositorio/";
-    
+
     public Inicio() {
         initComponents();
         setLocationRelativeTo(null);
@@ -85,6 +91,7 @@ public class Inicio extends javax.swing.JFrame {
         btnConfirmar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        btnTabla = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuNuevo = new javax.swing.JMenuItem();
@@ -120,6 +127,14 @@ public class Inicio extends javax.swing.JFrame {
         getContentPane().add(btnConfirmar, new org.netbeans.lib.awtextra.AbsoluteConstraints(429, 12, 151, -1));
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 644, -1, -1));
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(934, 561, 25, 11));
+
+        btnTabla.setText("Generar Tabla");
+        btnTabla.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTablaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnTabla, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 10, 140, -1));
 
         jMenu1.setText("Archivo");
 
@@ -206,12 +221,12 @@ public class Inicio extends javax.swing.JFrame {
             FileReader reader = null;
             BufferedReader buffer = null;
             String texto = "";
-            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, listEstados, listCasos);
+            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, elegido);
         }
     }//GEN-LAST:event_menuAbrirActionPerformed
 
     private void menuNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNuevoActionPerformed
-        PanelHojas panel = new PanelHojas("", "", listEstados, listCasos);
+        PanelHojas panel = new PanelHojas("", "", elegido);
         tabbed.addTab("Sin nombre", panel);
         tabbed.setTabComponentAt(tabbed.getTabCount() - 1, nueva.crearCabecera("Sin nombre", tabbed));
     }//GEN-LAST:event_menuNuevoActionPerformed
@@ -222,6 +237,8 @@ public class Inicio extends javax.swing.JFrame {
 
     private void menuCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCargarActionPerformed
         File nuevoLenguaje;
+        ProblemasLenguaje problemas = new ProblemasLenguaje(null, true);
+        problemas.setVisible(true);
         JFileChooser chooser = new JFileChooser();
         String seleccion = "Seleccione un archivo .len";
         chooser.setCurrentDirectory(new File("."));
@@ -241,11 +258,11 @@ public class Inicio extends javax.swing.JFrame {
                 while (buffer.ready()) {
                     texto += buffer.readLine() + "\n";
                 }
-
                 AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(texto));
                 Lenguajes nuevo = new Lenguajes();
                 try {
                     new SintaxLEN(lexico, nuevo.getListEstados(), nuevo.getListExpresiones(), nuevo.getListSimbolos(), nuevo).parse();
+                    creacionArbol.agregarIdentificadorNodos(nuevo.getListExpresiones());
                     nuevo.setPrimero(creacionArbol.unirArboles(nuevo.getListExpresiones()));
                     nuevo.setUnico(new MisExpresiones("principal", nuevo.getPrimero(), ""));
                     creacionArbol.pruebaExpresion(nuevo.getUnico());
@@ -254,7 +271,6 @@ public class Inicio extends javax.swing.JFrame {
                     lalr.buscarCasosIguales(nuevo.getListCasos(), nuevo.getMiTabla(), nuevo.getListSimbolos());
                     tabla2.mostrarTabla(nuevo.getMiTabla(), nuevo.getListCasos(), nuevo.getListSimbolos());
                     repositorio.guardarLenguaje(nuevo.getDatos().getNombre(), nuevo, REPOSITORIO);
-
                 } catch (Exception ex) {
                     Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -270,12 +286,21 @@ public class Inicio extends javax.swing.JFrame {
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
         int seleccionado = comboLen.getSelectedIndex();
         elegido = listLenguajes.get(seleccionado);
-        System.out.println("seleccione el lenguaje: "+elegido.getDatos().getNombre());
+        System.out.println("seleccione el lenguaje: " + elegido.getDatos().getNombre());
     }//GEN-LAST:event_btnConfirmarActionPerformed
+
+    private void btnTablaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTablaActionPerformed
+        if (elegido != null) {
+            gfTabla.generarTablaHTML(elegido.getListSimbolos(), elegido.getMiTabla(), elegido.getListCasos());
+        } else {
+            JOptionPane.showMessageDialog(null, "Aun no has elegido ningun lenguaje a usar.");
+        }
+    }//GEN-LAST:event_btnTablaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfirmar;
+    private javax.swing.JButton btnTabla;
     private javax.swing.JComboBox<String> comboLen;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
