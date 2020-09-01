@@ -25,6 +25,15 @@ public class Lenguajes implements Serializable{
     private NodoArbol primero = null;
     private MisExpresiones unico = null;
     private DatosLenguaje datos = new DatosLenguaje();
+    private String miCodigo;
+
+    public String getMiCodigo() {
+        return miCodigo;
+    }
+
+    public void setMiCodigo(String miCodigo) {
+        this.miCodigo = miCodigo;
+    }
 
     public DatosLenguaje getDatos() {
         return datos;

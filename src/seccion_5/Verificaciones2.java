@@ -5,6 +5,7 @@
  */
 package seccion_5;
 
+import gramaticaLEN.SintaxLEN;
 import java.util.ArrayList;
 import pollitos.Simbolos;
 
@@ -14,13 +15,16 @@ import pollitos.Simbolos;
  */
 public class Verificaciones2 {
 
-    public boolean verificarId(ArrayList<Simbolos> listSimbolos, String id) {
+    public boolean verificarId(ArrayList<Simbolos> listSimbolos, String id, Integer linea, Integer columna) {
         boolean existe = false;
         for (int i = 0; i < listSimbolos.size(); i++) {
             if (listSimbolos.get(i).getIdentificador().equals(id)) {
                 existe = true;
                 break;
             }
+        }
+        if(!existe){
+            SintaxLEN.totalErrores += "(ERROR SEMANTICO) El simbolo "+id+" no existe dentro del lenguaje. Linea: "+linea+" Columna: "+columna+".\n";
         }
         return existe;
     }
@@ -42,7 +46,8 @@ public class Verificaciones2 {
         return esTerminal;
     }
     
-    public Boolean verificarEstado(ArrayList<Simbolos> listSimbolos, String id){
+    //Existe un estado existe dentro de los simbolos del lenguaje
+    public Boolean verificarEstado(ArrayList<Simbolos> listSimbolos, String id, Integer linea, Integer columna){
         Boolean existe = false;
         for (int i = 0; i < listSimbolos.size(); i++) {
             if(listSimbolos.get(i).getIdentificador().equals(id)){
@@ -51,6 +56,9 @@ public class Verificaciones2 {
                     break;
                 }
             }
+        }
+        if(!existe){
+            SintaxLEN.totalErrores += "(ERROR SEMANTICO) El estado "+id+" no existe  dentro de los simbolos sentenciados del lenguaje. Linea: "+linea+" Columna: "+columna+".\n";
         }
         return existe;
     }

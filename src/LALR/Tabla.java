@@ -80,21 +80,16 @@ public class Tabla {
                 //System.out.println("            "+listCasos.get(i).getListVinculos().get(j).getVinculo()+" "+listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo());
                 Integer columna = determinarColumna(listCasos.get(i).getListVinculos().get(j).getVinculo().toString(), tabla, listSimbolos);
                 if (determinarTipoSimbolo(listSimbolos, listCasos.get(i).getListVinculos().get(j).getVinculo().toString())) {
-
                     if (tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] == null) {
                         NodoTabla nuevo = new NodoTabla();
                         nuevo.getAcciones().add(new NodoAccion("shift", listCasos.get(i).getIdCaso()));
-
                         tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] = nuevo;
-
                     } else {
                         tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna].getAcciones().add(new NodoAccion("shift", listCasos.get(i).getIdCaso()));
                     }
-
                 } else {
                     if (tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] == null) {
                         NodoTabla nuevo = new NodoTabla();
-
                         nuevo.getAcciones().add(new NodoAccion("goTo", listCasos.get(i).getIdCaso()));
                         tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] = nuevo;
                     } else {

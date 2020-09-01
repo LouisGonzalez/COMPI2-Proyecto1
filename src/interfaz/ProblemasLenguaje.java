@@ -5,7 +5,10 @@
  */
 package interfaz;
 
+import Modificaciones.ModificacionLEN;
+import gramaticaLEN.SintaxLEN;
 import hojas.NumeracionLineas;
+import java.io.File;
 
 /**
  *
@@ -14,15 +17,17 @@ import hojas.NumeracionLineas;
 public class ProblemasLenguaje extends javax.swing.JDialog {
 
     private NumeracionLineas numeracion;
-    
+    private String path;
     /**
      * Creates new form ProblemasLenguaje
      */
-    public ProblemasLenguaje(java.awt.Frame parent, boolean modal) {
+    public ProblemasLenguaje(java.awt.Frame parent, boolean modal, String texto, String path) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
-        txtLenguaje.setText("loquesea\nasfsfsdfsdfs");
+        this.path = path;
+        txtLenguaje.setText(texto);
+        txtErrores.setText(SintaxLEN.totalErrores);
         numeracion = new NumeracionLineas(txtLenguaje);
         jScrollPane1.setRowHeaderView(numeracion);
     }
@@ -53,6 +58,11 @@ public class ProblemasLenguaje extends javax.swing.JDialog {
         jScrollPane2.setViewportView(txtErrores);
 
         btnGuardar.setText("Guardar Cambios");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -81,6 +91,11 @@ public class ProblemasLenguaje extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        ModificacionLEN modificacion = new ModificacionLEN();
+        modificacion.guardarArchivoLEN(txtLenguaje.getText(), path);
+    }//GEN-LAST:event_btnGuardarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

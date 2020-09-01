@@ -6,6 +6,7 @@
 package LALR;
 
 import Graficas.GraficaPila;
+import interfaz.PanelHojas;
 import java.util.ArrayList;
 import pollitos.ExpresionesAux;
 import pollitos.NodoTabla;
@@ -26,7 +27,7 @@ public class FuncionesTabla {
     private CodigoJava codigo = new CodigoJava();
     private Tipado tipado = new Tipado();
 
-    public void transiciones(ArrayList<Token> listTokens, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos, ArrayList<Estados> listEstados) {
+    public void transiciones(ArrayList<Token> listTokens, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos, ArrayList<Estados> listEstados, String miCodigo) {
         ArrayList<Pila> miPila = new ArrayList<>();
         boolean cadenaAceptada = true;
         miPila.add(new Pila(null, 1));
@@ -37,6 +38,7 @@ public class FuncionesTabla {
         for (int i = 0; i < listTokens.size(); i++) {
             if (listTokens.get(i).getTipo() != null) {
                 if (listTokens.get(i).getTipo().equals("error")) {
+                    PanelHojas.totalErrores += "(ERROR LEXICO) token: "+listTokens.get(i).getValor()+" no reconocido dentro de la cadena de entrada.\n";
                     cadenaAceptada = false;
                 }
             }
@@ -52,7 +54,9 @@ public class FuncionesTabla {
                     if (noAccion != null) {
                         if (tabla[noFila][columna].getAcciones().get(noAccion).getAccion().equals("reduce")) {
                             //                 System.out.println("REDUCE ");
-                            if (!reduce(listTokens.get(i), miPila, listEstados, tabla[noFila][columna].getAcciones().get(0).getNoCaso(), tabla, listSimbolos)) {
+                            if (!reduce(listTokens.get(i), miPila, listEstados, tabla[noFila][columna].getAcciones().get(0).getNoCaso(), tabla, listSimbolos, miCodigo)) {
+                                
+                                PanelHojas.totalErrores += "(ERROR SINTACTICO) token: "+listTokens.get(i).getIdentificador()+" con valor: "+listTokens.get(i).getIdentificador()+" insertado de forma incorrecta.\n";
                                 cadenaAceptada = false;
                                 break;
                             }
@@ -66,14 +70,14 @@ public class FuncionesTabla {
                         }
                     }
                 } else {
-
+                    PanelHojas.totalErrores += "(ERROR SINTACTICO) token: "+listTokens.get(i).getIdentificador()+" con valor: "+listTokens.get(i).getValor()+" insertado de forma incorrecta.\n";
                     cadenaAceptada = false;
-                    System.out.println("AQUI CAMBIO " + i + " xd");
                     break;
                 }
             }
             if (i == listTokens.size() - 1) {
                 if (!tabla[noFila][columna].getAcciones().get(0).getAccion().equals("aceptacion")) {
+                    PanelHojas.totalErrores += "(ERROR SINTACTICO) se esperaba finalizacion de cadena.\n";
                     cadenaAceptada = false;
                 }
             }
@@ -95,7 +99,7 @@ public class FuncionesTabla {
         return true;
     }
 
-    public boolean reduce(Token actual, ArrayList<Pila> miPila, ArrayList<Estados> listEstados, int casoTransicion, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos) {
+    public boolean reduce(Token actual, ArrayList<Pila> miPila, ArrayList<Estados> listEstados, int casoTransicion, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos, String miCodigo) {
         boolean todoCorrecto = true;
         Estados analizado = buscarEstado(listEstados, casoTransicion);
         ArrayList<ExpresionesAux> expresiones = new ArrayList<>();
@@ -110,6 +114,7 @@ public class FuncionesTabla {
                 i--;
             }
         } else {
+            PanelHojas.totalErrores += "(ERROR SINTACTICO) token: "+actual.getIdentificador()+" con valor: "+actual.getValor()+" insertado de forma incorrecta.\n";
             todoCorrecto = false;
         }
         if (todoCorrecto) {
@@ -122,18 +127,16 @@ public class FuncionesTabla {
             String tipoDev = tipado.determinarTipo(analizado.getIdentificador(), listSimbolos);
             System.out.println(tipoDev + "        SOY EL TIPO DE DEVOLUCION DE " + analizado.getIdentificador());
             if (tipoDev.equals("entero")) {
-                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Integer"));
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Integer", miCodigo, analizado.getCodigoAntesala()));
 
             } else if (tipoDev.equals("cadena")) {
-                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "String"));
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "String", miCodigo, analizado.getCodigoAntesala()));
 
             } else if (tipoDev.equals("real")) {
-                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Double"));
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Double", miCodigo, analizado.getCodigoAntesala()));
             } else if (tipoDev.equals("")) {
-                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "void"));
-
+                nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "void", miCodigo, analizado.getCodigoAntesala()));
             }
-
             variables = "";
             nuevo.setEsTerminal(false);
             Pila nuevo2 = new Pila(nuevo, null);
@@ -155,12 +158,13 @@ public class FuncionesTabla {
                         mostrarPila(miPila);
                         grafica.tablaPila(miPila);
                         System.out.println("--------------------------------------------------------------------------");
-                        if (!reingresoToken(actual, miPila, tabla, listSimbolos, listEstados)) {
+                        if (!reingresoToken(actual, miPila, tabla, listSimbolos, listEstados, miCodigo)) {
                             todoCorrecto = false;
                         }
                     }
                 }
-            } else {
+            } else { 
+                PanelHojas.totalErrores += "(ERROR SINTACTICO) token: "+actual.getIdentificador()+" con valor: "+actual.getIdentificador()+" insertado de forma incorrecta.\n"; 
                 todoCorrecto = false;
             }
         }
@@ -169,7 +173,7 @@ public class FuncionesTabla {
     }
 
     //esto cuando se acaba de meter un token gracias a un reduce
-    public boolean reingresoToken(Token actual, ArrayList<Pila> miPila, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos, ArrayList<Estados> listEstados) {
+    public boolean reingresoToken(Token actual, ArrayList<Pila> miPila, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos, ArrayList<Estados> listEstados, String miCodigo) {
         boolean todoCorrecto = true;
         int ultimoNodo = miPila.get(miPila.size() - 1).getNoCaso();
         int columna = buscarColumna(tabla, actual.getIdentificador(), listSimbolos);
@@ -184,7 +188,7 @@ public class FuncionesTabla {
                 if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("reduce")) {
                     //   System.out.println("REDUCE2");
                     //        System.out.println("fila: "+ultimoNodo+" columnax2: "+columna);
-                    if (!reduce(actual, miPila, listEstados, tabla[ultimoNodo][columna].getAcciones().get(noAccion).getNoCaso(), tabla, listSimbolos)) {
+                    if (!reduce(actual, miPila, listEstados, tabla[ultimoNodo][columna].getAcciones().get(noAccion).getNoCaso(), tabla, listSimbolos, miCodigo)) {
                         todoCorrecto = false;
                     }
                 } else if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("goTo")) {
@@ -197,6 +201,7 @@ public class FuncionesTabla {
                 }
             }
         } else {
+            PanelHojas.totalErrores += "(ERROR SINTACTICO) token: "+actual.getIdentificador()+" con valor: "+actual.getValor()+" insertado de forma incorrecta.\n";
             todoCorrecto = false;
         }
         return todoCorrecto;

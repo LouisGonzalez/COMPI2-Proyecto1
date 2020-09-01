@@ -134,7 +134,7 @@ public class Inicio extends javax.swing.JFrame {
                 btnTablaActionPerformed(evt);
             }
         });
-        getContentPane().add(btnTabla, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 10, 140, -1));
+        getContentPane().add(btnTabla, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 10, 140, -1));
 
         jMenu1.setText("Archivo");
 
@@ -237,8 +237,6 @@ public class Inicio extends javax.swing.JFrame {
 
     private void menuCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCargarActionPerformed
         File nuevoLenguaje;
-        ProblemasLenguaje problemas = new ProblemasLenguaje(null, true);
-        problemas.setVisible(true);
         JFileChooser chooser = new JFileChooser();
         String seleccion = "Seleccione un archivo .len";
         chooser.setCurrentDirectory(new File("."));
@@ -260,20 +258,35 @@ public class Inicio extends javax.swing.JFrame {
                 }
                 AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(texto));
                 Lenguajes nuevo = new Lenguajes();
+                boolean aquiEntro = false;
                 try {
                     new SintaxLEN(lexico, nuevo.getListEstados(), nuevo.getListExpresiones(), nuevo.getListSimbolos(), nuevo).parse();
-                    creacionArbol.agregarIdentificadorNodos(nuevo.getListExpresiones());
-                    nuevo.setPrimero(creacionArbol.unirArboles(nuevo.getListExpresiones()));
-                    nuevo.setUnico(new MisExpresiones("principal", nuevo.getPrimero(), ""));
-                    creacionArbol.pruebaExpresion(nuevo.getUnico());
-                    creacionTabla.creacionCasos(nuevo.getListEstados(), nuevo.getListCasos());
-                    nuevo.setMiTabla(tabla2.creacionTabla(nuevo.getListCasos(), nuevo.getListSimbolos()));
-                    lalr.buscarCasosIguales(nuevo.getListCasos(), nuevo.getMiTabla(), nuevo.getListSimbolos());
-                    tabla2.mostrarTabla(nuevo.getMiTabla(), nuevo.getListCasos(), nuevo.getListSimbolos());
-                    repositorio.guardarLenguaje(nuevo.getDatos().getNombre(), nuevo, REPOSITORIO);
                 } catch (Exception ex) {
+                    aquiEntro = true;
                     Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                    if (SintaxLEN.totalErrores.equals("") && !aquiEntro) {
+                        creacionArbol.agregarIdentificadorNodos(nuevo.getListExpresiones());
+                        nuevo.setPrimero(creacionArbol.unirArboles(nuevo.getListExpresiones()));
+                        nuevo.setUnico(new MisExpresiones("principal", nuevo.getPrimero(), ""));
+                        creacionArbol.pruebaExpresion(nuevo.getUnico());
+                        creacionTabla.creacionCasos(nuevo.getListEstados(), nuevo.getListCasos());
+                        nuevo.setMiTabla(tabla2.creacionTabla(nuevo.getListCasos(), nuevo.getListSimbolos()));
+                       // lalr.buscarCasosIguales(nuevo.getListCasos(), nuevo.getMiTabla(), nuevo.getListSimbolos());
+                        tabla2.mostrarTabla(nuevo.getMiTabla(), nuevo.getListCasos(), nuevo.getListSimbolos());
+                        repositorio.guardarLenguaje(nuevo.getDatos().getNombre(), nuevo, REPOSITORIO);
+                        comboLen.addItem(nuevo.getDatos().getNombre());
+                        listLenguajes.add(nuevo);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Hay errores dentro del archivo de entrada, pulsa el boton para ver mas detalles.");
+                        ProblemasLenguaje problemas = new ProblemasLenguaje(null, true, texto, nuevoLenguaje.getPath());
+                        problemas.setVisible(true);
+                        SintaxLEN.totalErrores = "";
+                    }
+                
+                
+                
+                
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {

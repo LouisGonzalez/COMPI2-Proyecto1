@@ -6,6 +6,7 @@
 package Graficas;
 
 import LALR.NodoCaso;
+import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -38,6 +39,8 @@ public class GraficaTabla {
             buffer.newLine();
             buffer.close();
             redactor.close();
+            Desktop.getDesktop().open(archivoTabla);
+            
         } catch (IOException ex) {
             Logger.getLogger(GraficaTabla.class.getName()).log(Level.SEVERE, null, ex);
         }

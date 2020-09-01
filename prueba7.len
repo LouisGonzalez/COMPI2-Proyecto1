@@ -1,4 +1,4 @@
-nombre: java;
+nombre: c;
 autor: sun Microsystems;
 lanzamiento: 1996; /* Significa que cuando se encuentre este token deberá ser ignorado */
 extension: java;
@@ -27,27 +27,29 @@ public Integer suma(Integer numero1,Integer numero2){
 /* Significa que cuando se encuentre este token deberá ser ignorado */
 
 ida = [a-z]+;
-enteros = ("-")?[0-9]+;
-reals = [0-9]+((".")[0-9]+)?;
+numero = [0-9]+;
+numreal = [0-9]+((".")[0-9]+)?;
 mas = "+";
 por = "*";
-hola = "hola";
-unacadena = "sddfsdf";
+parentesisa = "(";
+parentesisb = ")";
+llavea = "[";
+
 
 
 %% 
 
-terminal por, hola; /* Significa que cuando se encuentre este token deberá ser ignorado */
-terminal ida, reals, mas;
-terminal entero enteros;
+terminal ida, numero, numreal, mas, por, parentesisa, parentesisb, llavea;
 
-no terminal S, V;
-no terminal entero E;
+no terminal S, E, T, F;
 
 %%
 
-S :: E:a { System.out.println(a+"  el valor es"); };
-E :: E:a mas E:b { System.out.println("GAAA"); RESULT=a+b; };
-E :: E:a por E:b { RESULT=a*b; };
-E :: enteros:a { RESULT=a; };
+E :: E mas T;
+E :: T;
+T :: F por T;
+T :: F;
+F :: numero;
+F :: ida;
+F :: parentesisa E parentesisb;
 %%

@@ -41,6 +41,8 @@ public class PanelHojas extends javax.swing.JPanel {
     public static String pilaHTML = "";
     private NumeracionLineas numeracion;
 
+    public static String totalErrores = "";
+    
     /* private ArrayList<MisExpresiones> listExpresiones2 = new ArrayList<>();
     private ArrayList<Estados> listEstados;
     private ArrayList<NodoCaso> listCasos;
@@ -209,7 +211,14 @@ public class PanelHojas extends javax.swing.JPanel {
             for (int j = 0; j < listTokens.size(); j++) {
                 System.out.println("Cadena:  " + listTokens.get(j).getIdentificador() + " " + listTokens.get(j).getValor().toString());
             }
-            funciones.transiciones(listTokens, elegido.getMiTabla(), elegido.getListSimbolos(), elegido.getListEstados());
+            funciones.transiciones(listTokens, elegido.getMiTabla(), elegido.getListSimbolos(), elegido.getListEstados(), elegido.getMiCodigo());
+            
+            if(totalErrores.equals("")){
+                
+            } else {
+                estado.setText(totalErrores);
+            }
+            totalErrores = "";
             graficaPila.generarPilaHTML();
         } else {
             JOptionPane.showMessageDialog(null, "No has elegido un lenguaje aun.");

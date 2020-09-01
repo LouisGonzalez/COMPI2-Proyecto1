@@ -5,6 +5,7 @@
  */
 package LALR;
 
+import interfaz.PanelHojas;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
@@ -20,20 +21,45 @@ import org.codehaus.janino.SimpleCompiler;
  */
 public class CodigoJava {
 
-    public String generarCodigo(String variables, String sentencia, String varDevolver, String tipoDev) {
+    public String generarCodigo(String variables, String sentencia, String varDevolver, String tipoDev, String codigo2, String codigoAntesala) {
         String codigo = "";
+        String antesala = "";
+        if (codigoAntesala != null) {
+            antesala = codigoAntesala;
+        }
         if (tipoDev.equals("void")) {
-            codigo = "public class claseGeneral{\n"
-                    + variables + "\n"
-                    + "public " + tipoDev + " mains(){\n"
-                    +  sentencia + ";\n"
-                    + "}\n"
-                    + "}";
+            if (sentencia != null) {
 
+                codigo = "import java.util.*;\n"
+                        + "import java.io.*;\n"
+                        + "public class claseGeneral{\n"
+                        + variables + "\n"
+                        + codigo2 + "\n"
+                        + "public " + tipoDev + " mains(){\n"
+                        + antesala + "\n"
+                        + sentencia + ";\n"
+                        + "}\n"
+                        + "}";
+            } else {
+                codigo = "import java.util.*;\n"
+                        + "import java.io.*;\n"
+                        + "public class claseGeneral{\n"
+                        + variables + "\n"
+                        + codigo2 + "\n"
+                        + "public " + tipoDev + " mains(){\n"
+                        + antesala + "\n"
+                        + "}\n"
+                        + "}";
+
+            }
         } else {
-            codigo = "public class claseGeneral{\n"
+            codigo = "import java.util.*;"
+                    + "import java.io.*;"
+                    + "public class claseGeneral{\n"
                     + variables + "\n"
+                    + codigo2 + "\n"
                     + "public " + tipoDev + " mains(){\n"
+                    + antesala + "\n"
                     + "     " + tipoDev + " " + varDevolver + " = null;\n"
                     + "     " + varDevolver + "=" + sentencia + ";\n"
                     + "return " + varDevolver + ";\n"
@@ -43,10 +69,10 @@ public class CodigoJava {
         return codigo;
     }
 
-    public Object devolverDatos(String variables, String sentencia, String varDevolver, String tipoDev) {
+    public Object devolverDatos(String variables, String sentencia, String varDevolver, String tipoDev, String codigo2, String codigoAntesala) {
         Object resultado = null;
         if (sentencia != null) {
-            String codigo = generarCodigo(variables, sentencia, varDevolver, tipoDev);
+            String codigo = generarCodigo(variables, sentencia, varDevolver, tipoDev, codigo2, codigoAntesala);
             SimpleCompiler compiler = new SimpleCompiler();
 
             System.out.println(codigo);
@@ -59,6 +85,7 @@ public class CodigoJava {
                 //   System.out.println(resultado);
             } catch (CompileException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException ex) {
                 Logger.getLogger(CodigoJava.class.getName()).log(Level.SEVERE, null, ex);
+                PanelHojas.totalErrores += "(ERROR SEMANTICO) " + CodigoJava.class.getName();
             }
         }
         return resultado;

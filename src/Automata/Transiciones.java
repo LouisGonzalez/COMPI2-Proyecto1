@@ -7,6 +7,7 @@ package Automata;
 
 import Arbol.NodoArbol;
 import Arbol.NodoSiguiente;
+import interfaz.PanelHojas;
 import java.io.Serializable;
 import java.util.ArrayList;
 import pollitos.Token;

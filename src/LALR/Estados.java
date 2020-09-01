@@ -20,7 +20,26 @@ public class Estados implements Serializable {
     private ArrayList<Expresiones> misExpresiones;
     private ArrayList<Carril> misCarriles = new ArrayList<>();
     private boolean simplificado = false;
+    private String codigoAntesala;
     private String result;
+    private boolean marcado;
+    private Integer noIterador;
+
+    public Integer getNoIterador() {
+        return noIterador;
+    }
+
+    public void setNoIterador(Integer noIterador) {
+        this.noIterador = noIterador;
+    }
+    
+    public boolean isMarcado() {
+        return marcado;
+    }
+
+    public void setMarcado(boolean marcado) {
+        this.marcado = marcado;
+    }
 
     public Estados(){
         
@@ -32,13 +51,26 @@ public class Estados implements Serializable {
         misExpresiones = estado.misExpresiones;
         misCarriles = estado.misCarriles;
         simplificado = estado.simplificado;
+        result = estado.result;
+        codigoAntesala = estado.codigoAntesala;
+        noIterador = estado.noIterador;
+        
     }
   
-    public Estados(int noEstado, String identificador, ArrayList<Expresiones> misExpresiones, String result) {
+    public Estados(int noEstado, String identificador, ArrayList<Expresiones> misExpresiones, String result, String codigoAntesala) {
         this.identificador = identificador;
         this.misExpresiones = misExpresiones;
         this.noEstado = noEstado;
         this.result = result;
+        this.codigoAntesala = codigoAntesala;
+    }
+
+    public String getCodigoAntesala() {
+        return codigoAntesala;
+    }
+
+    public void setCodigoAntesala(String codigoAntesala) {
+        this.codigoAntesala = codigoAntesala;
     }
 
     public String getResult() {
