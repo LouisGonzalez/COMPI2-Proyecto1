@@ -10,9 +10,11 @@ import Graficas.GraficaPila;
 import Graficas.GraficaTabla;
 import LALR.Estados;
 import LALR.GeneracionTabla;
+import LALR.ManejoResults;
 import LALR.NodoCaso;
 import LALR.OptimizacionLALR;
 import LALR.Tabla;
+import Modificaciones.GuardadoCodigos;
 import Repositorio.Guardado;
 import gramaticaLEN.AnalizadorLexico;
 import gramaticaLEN.SintaxLEN;
@@ -25,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import pollitos.DatosGuardado;
 import pollitos.Lenguajes;
 import pollitos.MisExpresiones;
 
@@ -37,6 +40,7 @@ public class Inicio extends javax.swing.JFrame {
     //Estos arraylist lo mas probable es que sean temporales (BORRADOS CON EL TIEMPO)
     private Lenguajes elegido = null;
     private ArrayList<Lenguajes> listLenguajes = new ArrayList<>();
+    public static Integer panelActivo = null;
 
     private ArrayList<Estados> listEstados = new ArrayList<>();
     private ArrayList<NodoCaso> listCasos = new ArrayList<>();
@@ -46,6 +50,10 @@ public class Inicio extends javax.swing.JFrame {
     private Tabla tabla2 = new Tabla();
     private OptimizacionLALR lalr = new OptimizacionLALR();
     private Guardado repositorio = new Guardado();
+    private ManejoResults result = new ManejoResults();
+    private ArrayList<DatosGuardado> textosPanel = new ArrayList<>();
+    private GuardadoCodigos guardado = new GuardadoCodigos();
+
 
     /*GRAFICAS*/
     private GraficaTabla gfTabla = new GraficaTabla();
@@ -91,7 +99,6 @@ public class Inicio extends javax.swing.JFrame {
         btnConfirmar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        btnTabla = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuNuevo = new javax.swing.JMenuItem();
@@ -101,7 +108,6 @@ public class Inicio extends javax.swing.JFrame {
         menuSalir = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
-        menuComp = new javax.swing.JMenuItem();
         menuCargar = new javax.swing.JMenuItem();
         menuBorrar = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
@@ -128,14 +134,6 @@ public class Inicio extends javax.swing.JFrame {
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 644, -1, -1));
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(934, 561, 25, 11));
 
-        btnTabla.setText("Generar Tabla");
-        btnTabla.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTablaActionPerformed(evt);
-            }
-        });
-        getContentPane().add(btnTabla, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 10, 140, -1));
-
         jMenu1.setText("Archivo");
 
         menuNuevo.setText("Nuevo");
@@ -155,9 +153,19 @@ public class Inicio extends javax.swing.JFrame {
         jMenu1.add(menuAbrir);
 
         menuGuardar.setText("Guardar");
+        menuGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuGuardarActionPerformed(evt);
+            }
+        });
         jMenu1.add(menuGuardar);
 
         menuGuardar2.setText("Guardar como");
+        menuGuardar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuGuardar2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(menuGuardar2);
 
         menuSalir.setText("Salir");
@@ -175,9 +183,6 @@ public class Inicio extends javax.swing.JFrame {
 
         jMenu3.setText("Ejecutar");
 
-        menuComp.setText("Compilar");
-        jMenu3.add(menuComp);
-
         menuCargar.setText("Cargar lenguaje");
         menuCargar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -194,6 +199,11 @@ public class Inicio extends javax.swing.JFrame {
         jMenu4.setText("Ver");
 
         menuLARL.setText("LARL");
+        menuLARL.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLARLActionPerformed(evt);
+            }
+        });
         jMenu4.add(menuLARL);
 
         menuPila.setText("Pila");
@@ -221,12 +231,12 @@ public class Inicio extends javax.swing.JFrame {
             FileReader reader = null;
             BufferedReader buffer = null;
             String texto = "";
-            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, elegido);
+            nueva.crearHoja(archivoNuevo, reader, buffer, texto, tabbed, elegido, textosPanel);
         }
     }//GEN-LAST:event_menuAbrirActionPerformed
 
     private void menuNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNuevoActionPerformed
-        PanelHojas panel = new PanelHojas("", "", elegido);
+        PanelHojas panel = new PanelHojas("", "", elegido, tabbed.getTabCount(), textosPanel);
         tabbed.addTab("Sin nombre", panel);
         tabbed.setTabComponentAt(tabbed.getTabCount() - 1, nueva.crearCabecera("Sin nombre", tabbed));
     }//GEN-LAST:event_menuNuevoActionPerformed
@@ -265,14 +275,16 @@ public class Inicio extends javax.swing.JFrame {
                     aquiEntro = true;
                     Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                    if (SintaxLEN.totalErrores.equals("") && !aquiEntro) {
+                if (SintaxLEN.totalErrores.equals("") && !aquiEntro) {
+                    if (!result.verificarResults(nuevo.getListEstados(), nuevo.getListSimbolos())) {
+
                         creacionArbol.agregarIdentificadorNodos(nuevo.getListExpresiones());
                         nuevo.setPrimero(creacionArbol.unirArboles(nuevo.getListExpresiones()));
                         nuevo.setUnico(new MisExpresiones("principal", nuevo.getPrimero(), ""));
                         creacionArbol.pruebaExpresion(nuevo.getUnico());
                         creacionTabla.creacionCasos(nuevo.getListEstados(), nuevo.getListCasos());
                         nuevo.setMiTabla(tabla2.creacionTabla(nuevo.getListCasos(), nuevo.getListSimbolos()));
-                       // lalr.buscarCasosIguales(nuevo.getListCasos(), nuevo.getMiTabla(), nuevo.getListSimbolos());
+                        lalr.buscarCasosIguales(nuevo.getListCasos(), nuevo.getMiTabla(), nuevo.getListSimbolos());
                         tabla2.mostrarTabla(nuevo.getMiTabla(), nuevo.getListCasos(), nuevo.getListSimbolos());
                         repositorio.guardarLenguaje(nuevo.getDatos().getNombre(), nuevo, REPOSITORIO);
                         comboLen.addItem(nuevo.getDatos().getNombre());
@@ -283,10 +295,13 @@ public class Inicio extends javax.swing.JFrame {
                         problemas.setVisible(true);
                         SintaxLEN.totalErrores = "";
                     }
-                
-                
-                
-                
+                } else {
+                    JOptionPane.showMessageDialog(null, "Hay errores dentro del archivo de entrada, pulsa el boton para ver mas detalles.");
+                    ProblemasLenguaje problemas = new ProblemasLenguaje(null, true, texto, nuevoLenguaje.getPath());
+                    problemas.setVisible(true);
+                    SintaxLEN.totalErrores = "";
+                }
+
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -302,18 +317,39 @@ public class Inicio extends javax.swing.JFrame {
         System.out.println("seleccione el lenguaje: " + elegido.getDatos().getNombre());
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
-    private void btnTablaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTablaActionPerformed
+    private void menuGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuGuardarActionPerformed
+        if (textosPanel.get(tabbed.getSelectedIndex()) != null) {
+            guardado.guardarArchivo(textosPanel.get(tabbed.getSelectedIndex()).getPath(), textosPanel.get(tabbed.getSelectedIndex()).getTexto());
+            JOptionPane.showMessageDialog(null, "Archivo guardado con exito");
+        }
+
+
+    }//GEN-LAST:event_menuGuardarActionPerformed
+
+    private void menuGuardar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuGuardar2ActionPerformed
+        if (tabbed.getTabCount() > 0) {
+            if (elegido != null) {
+                GuardadoArchivos guardado = new GuardadoArchivos(null, true, textosPanel.get(tabbed.getSelectedIndex()).getTexto(), elegido.getDatos().getExtension());
+                guardado.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Porfavor selecciona un lenguaje para proceder.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "No has abierto ningun archivo aun.");
+        }
+    }//GEN-LAST:event_menuGuardar2ActionPerformed
+
+    private void menuLARLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLARLActionPerformed
         if (elegido != null) {
             gfTabla.generarTablaHTML(elegido.getListSimbolos(), elegido.getMiTabla(), elegido.getListCasos());
         } else {
             JOptionPane.showMessageDialog(null, "Aun no has elegido ningun lenguaje a usar.");
         }
-    }//GEN-LAST:event_btnTablaActionPerformed
+    }//GEN-LAST:event_menuLARLActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfirmar;
-    private javax.swing.JButton btnTabla;
     private javax.swing.JComboBox<String> comboLen;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -325,7 +361,6 @@ public class Inicio extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuAbrir;
     private javax.swing.JMenuItem menuBorrar;
     private javax.swing.JMenuItem menuCargar;
-    private javax.swing.JMenuItem menuComp;
     private javax.swing.JMenuItem menuGuardar;
     private javax.swing.JMenuItem menuGuardar2;
     private javax.swing.JMenuItem menuLARL;

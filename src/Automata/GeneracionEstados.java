@@ -152,14 +152,11 @@ public class GeneracionEstados implements Serializable{
     //agrega el primer vinculo conductor a un estado, si es de aceptacion
     public void agregarPrimerConductor(ArrayList<NodoEstado> listEstados, ArrayList<NodoSiguiente> tablaSiguiente) {
         for (int i = 0; i < listEstados.size(); i++) {
-            //if (listEstados.get(i).isAceptacion()) {
                 for (int j = 0; j < listEstados.get(i).getListVinculos().size(); j++) {
                     
                     Integer numEstado = buscarEstado(listEstados, tablaSiguiente, listEstados.get(i).getListVinculos().get(j));
                     NodoEstado estado1 = buscarEstado2(numEstado, listEstados);
                     if (estado1 != null) {
-                        System.out.println(listEstados.get(i).getListVinculos().get(j).getTipo());
-                        System.out.println(listEstados.get(i).getListVinculos().get(j).getPalabraCompleta()+"       PALABRA AGREGAFD");
                         Conductores conductor = new Conductores(listEstados.get(i).getListVinculos().get(j).getPrioridad(), listEstados.get(i).getListVinculos().get(j).getIdExpresion(), listEstados.get(i).getListVinculos().get(j).getTipo(), listEstados.get(i).getListVinculos().get(j).getPalabraCompleta());
                         if(listEstados.get(i).getListVinculos().get(j).getTipo().equals("caracteres")){
                             conductor.setCaracter(listEstados.get(i).getListVinculos().get(j).getCaracteres());
@@ -167,7 +164,6 @@ public class GeneracionEstados implements Serializable{
                         estado1.getConductores().add(conductor);
                     }
                 }
-          //  }
         }
     }
 

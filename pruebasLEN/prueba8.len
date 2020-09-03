@@ -1,4 +1,4 @@
-nombre: javaMicro44Sistemsperro;
+nombre: ccs;
 autor: sun Microsystems;
 lanzamiento: 1996; /* Significa que cuando se encuentre este token deberá ser ignorado */
 extension: java;
@@ -27,30 +27,32 @@ public Integer suma(Integer numero1,Integer numero2){
 /* Significa que cuando se encuentre este token deberá ser ignorado */
 
 ida = [a-z]+;
-enteros = [0-9]+;
-reals = [0-9]+((".")[0-9]+)?;
+num = [0-9]+;
+numreal = [0-9]+((".")[0-9]+)?;
 mas = "+";
-menos = "-";
 por = "*";
-hola = "hola";
+menos = "-";
+div = "/";
+
 
 
 
 %% 
 
-terminal por, hola; /* Significa que cuando se encuentre este token deberá ser ignorado */
-terminal ida, reals, mas, menos;
-terminal entero enteros;
+terminal ida, numreal;
+terminal por, div;
+terminal mas, menos;
+terminal entero num;
 
-no terminal S, V;
-no terminal entero E;
+no terminal A, X, Y;
 
 %%
 
-S :: E:a { System.out.println(a+"  el valor es"); };
-E :: E:a mas E:b { RESULT=a+b; };
-E :: E:a menos E:b { RESULT=a-b; };
-E :: E:a por E:b { RESULT=a*b; };
-E :: enteros:a { RESULT=a; };
+A :: num X Y; 
+X :: mas num;
+X :: num;
+X :: div num;
+X :: ; 
+Y :: menos num;
 
 %%

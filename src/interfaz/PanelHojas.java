@@ -5,31 +5,14 @@
  */
 package interfaz;
 
-import Arbol.GeneracionArbol;
-import Arbol.NodoArbol;
 import Automata.Transiciones;
 import Graficas.GraficaPila;
-import Graficas.GraficaTabla;
-import LALR.Carril;
-import LALR.Estados;
 import LALR.FuncionesTabla;
-import LALR.GeneracionTabla;
-import LALR.NodoCaso;
-import LALR.OptimizacionLALR;
-import LALR.Primeros;
-import LALR.Tabla;
-import gramaticaLEN.AnalizadorLexico;
-import gramaticaLEN.SintaxLEN;
 import hojas.NumeracionLineas;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import pollitos.DatosGuardado;
 import pollitos.Lenguajes;
-import pollitos.MisExpresiones;
-import pollitos.NodoTabla;
-import pollitos.Simbolos;
 import pollitos.Token;
 
 /**
@@ -40,31 +23,42 @@ public class PanelHojas extends javax.swing.JPanel {
 
     public static String pilaHTML = "";
     private NumeracionLineas numeracion;
+    private NumeracionLineas numeracion2;
 
     public static String totalErrores = "";
-    
-    /* private ArrayList<MisExpresiones> listExpresiones2 = new ArrayList<>();
-    private ArrayList<Estados> listEstados;
-    private ArrayList<NodoCaso> listCasos;
-    public static NodoTabla[][] miTabla = null;
-    private ArrayList<Simbolos> listSimbolos = new ArrayList<>();*/
+
     private FuncionesTabla funciones = new FuncionesTabla();
     private Transiciones transicion = new Transiciones();
     private ArrayList<Token> listTokens = new ArrayList<>();
     private GraficaPila graficaPila = new GraficaPila();
     private Lenguajes elegido;
+    private int noPanel;
+    private String path;
+    private ArrayList<DatosGuardado> listTextos;
+    public static String todoBien = "";
 
     /**
      * Creates new form PanelHojas
      */
-    public PanelHojas(String texto, String path,  Lenguajes elegido) {
+    public PanelHojas(String texto, String path, Lenguajes elegido, int noPanel, ArrayList<DatosGuardado> listTextos) {
         initComponents();
-        // this.listEstados = listEstados;
-        //this.listCasos = listCasos;
         txtCodigo.setText(texto);
         this.elegido = elegido;
+        this.noPanel = noPanel;
+        this.listTextos = listTextos;
+        this.path = path;
+        System.out.println(path);
+        if (listTextos.size() <= noPanel) {
+            listTextos.add(new DatosGuardado(texto, path));
+            
+        } else {
+            listTextos.set(noPanel, new DatosGuardado(texto, path));
+        }
+        System.out.println("ACABAS DE ENTRAR AL PANEL NO: " + noPanel);
         numeracion = new NumeracionLineas(txtCodigo);
+        numeracion2 = new NumeracionLineas(estado);
         jScrollPane1.setRowHeaderView(numeracion);
+        jScrollPane2.setRowHeaderView(numeracion2);
     }
 
     /**
@@ -78,29 +72,15 @@ public class PanelHojas extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         txtCodigo = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
-        diagrama = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         estado = new javax.swing.JTextArea();
+        jButton1 = new javax.swing.JButton();
+        btnLimpiar = new javax.swing.JButton();
 
         txtCodigo.setColumns(20);
         txtCodigo.setRows(5);
         jScrollPane1.setViewportView(txtCodigo);
-
-        jButton1.setText("compilar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        diagrama.setText("Diagrama");
-        diagrama.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                diagramaActionPerformed(evt);
-            }
-        });
 
         jButton4.setText("Compilar");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -113,6 +93,20 @@ public class PanelHojas extends javax.swing.JPanel {
         estado.setRows(5);
         jScrollPane2.setViewportView(estado);
 
+        jButton1.setText("Ver Pila");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -120,22 +114,15 @@ public class PanelHojas extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(20, 20, 20))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(82, 82, 82)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(diagrama, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(23, 23, 23))))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 702, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,90 +130,59 @@ public class PanelHojas extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 333, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(diagrama)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton4))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton4)
+                    .addComponent(jButton1)
+                    .addComponent(btnLimpiar))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        /* AnalizadorLexico lexico = new AnalizadorLexico(new StringReader(txtCodigo.getText()));
-        try {
-            Lenguajes algo = new Lenguajes();
-            new SintaxLEN(lexico, listEstados, listExpresiones2, listSimbolos, algo).parse();
-            arbol2.agregarIdentificadorNodos(listExpresiones2);
-            primero = arbol2.unirArboles(listExpresiones2);
-            unico = new MisExpresiones("principal", primero, "");
-            arbol2.pruebaExpresion(unico);
-            for (int i = 0; i < listEstados.get(listEstados.size() - 1).getMisExpresiones().size(); i++) {
-                System.out.println(listEstados.get(listEstados.size() - 1).getMisExpresiones().get(i).getIdentificador());
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(PanelHojas.class.getName()).log(Level.SEVERE, null, ex);
-        }    */
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     int i = 0;
-    private void diagramaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_diagramaActionPerformed
-        /*   tabla.creacionCasos(listEstados, listCasos);
-        System.out.println(listCasos.size() + "           EL NUMERO TOTAL DE CASOS");
-        for (int i = 0; i < listCasos.size(); i++) {
-            String vinculos = "";
-            for (int j = 0; j < listCasos.get(i).getListEstados().size(); j++) {
-                System.out.println(listCasos.get(i).getListEstados().get(j).getNoEstado() + "     " + listCasos.get(i).getListEstados().get(j).getIdentificador());
-                String carriles = "";
-                for (int k = 0; k < listCasos.get(i).getListEstados().get(j).getMisCarriles().size(); k++) {
-                    carriles += listCasos.get(i).getListEstados().get(j).getMisCarriles().get(k).getId();
-                }
-                System.out.println("            Carriles   " + carriles);
-            }
-            System.out.println("--------------------VINCULOS CASO NO. " + listCasos.get(i).getIdCaso());
-            for (int k = 0; k < listCasos.get(i).getListVinculos().size(); k++) {
-                vinculos += "ID vinculo: " + listCasos.get(i).getListVinculos().get(k).getIdCasoVinculo() + "   objeto referencia: " + listCasos.get(i).getListVinculos().get(k).getVinculo();
-            }
-            System.out.println(vinculos);
-            System.out.println("-----------------------------------------------------------------------");
-        }
-    
-        miTabla = tabla2.creacionTabla(listCasos, listSimbolos);
-        lalr.buscarCasosIguales(listCasos, miTabla, listSimbolos);
-        tabla2.mostrarTabla(miTabla, listCasos, listSimbolos);*/
-    }//GEN-LAST:event_diagramaActionPerformed
-
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         if (elegido != null) {
             listTokens = new ArrayList<>();
+            listTextos.set(noPanel, new DatosGuardado(txtCodigo.getText(), path));
             String[] lineas = txtCodigo.getText().split("\n");
             String texto = "";
             for (String linea : lineas) {
                 texto += linea;
+            }
+            String[] tab = texto.split("\t");
+            texto = "";
+            for (String string : tab) {
+                texto += string;
             }
             transicion.transicionCadena(listTokens, elegido.getUnico().getListEstados().get(0), elegido.getUnico().getListEstados(), texto, elegido.getUnico().getTablaSiguientes());
             for (int j = 0; j < listTokens.size(); j++) {
                 System.out.println("Cadena:  " + listTokens.get(j).getIdentificador() + " " + listTokens.get(j).getValor().toString());
             }
             funciones.transiciones(listTokens, elegido.getMiTabla(), elegido.getListSimbolos(), elegido.getListEstados(), elegido.getMiCodigo());
-            
-            if(totalErrores.equals("")){
-                
+
+            if (totalErrores.equals("")) {
+                estado.setText(todoBien);
             } else {
                 estado.setText(totalErrores);
             }
             totalErrores = "";
-            graficaPila.generarPilaHTML();
+            todoBien = "";
         } else {
             JOptionPane.showMessageDialog(null, "No has elegido un lenguaje aun.");
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        graficaPila.generarPilaHTML();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        estado.setText("");
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton diagrama;
+    private javax.swing.JButton btnLimpiar;
     private javax.swing.JTextArea estado;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton4;

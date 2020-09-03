@@ -1,0 +1,62 @@
+nombre: clrs;
+autor: sun Microsystems;
+lanzamiento: 1996; /* Significa que cuando se encuentre este token deberá ser ignorado */
+extension: java;
+
+
+%% 
+
+List<String> listString=new ArrayList<>();
+
+public static void prueba(){
+	System.out.println("sasdfdasdfsdfsdfsdfsdddddddd");
+	
+}
+
+public void addString(String valor){
+         listString.add(valor); 
+}
+
+
+public Integer suma(Integer numero1,Integer numero2){
+          return numero1+numero2; 
+}
+
+
+%%
+/* Significa que cuando se encuentre este token deberá ser ignorado */
+
+ids = [a-z]+;
+hola = "hola";
+enteros = [0-9]+;
+llavea = "{";
+llaveb = "}";
+colores = "COLORES";
+dospuntos = ":";
+red = "Red";
+blue = "Blue";
+green = "Green";
+coma = ",";
+
+
+
+%% 
+
+terminal ids, enteros, llavea, llaveb, colores, dospuntos, red, blue, green, coma;
+
+no terminal A, B, C, D;
+no terminal COMAA, COMAB, COMAC;
+
+%%
+
+A :: llaveA colores dospuntos llaveb B llaveb llaveb;
+B :: ids dospuntos llavea C llaveb COMAA;
+C :: ids dospuntos llavea D llaveb COMAB;
+D :: red dospuntos enteros COMAC;
+D :: blue dospuntos enteros COMAC;
+D :: green dospuntos enteros COMAC;
+COMAA ::= coma B;
+COMAB ::= coma C;
+COMAB ::= coma D;
+
+%%

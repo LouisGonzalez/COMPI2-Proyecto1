@@ -11,9 +11,9 @@ body{
 }
 
 table{
-    width: 100px;
+    width: 100%;
     background-color: white;
-    text-align: left;
+    text-align: center;
     border-collapse: collapse; 
     width: 100%;
 

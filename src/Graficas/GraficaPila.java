@@ -6,6 +6,7 @@
 package Graficas;
 
 import interfaz.PanelHojas;
+import java.awt.Desktop;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -34,7 +35,7 @@ public class GraficaPila {
             buffer.newLine();
             buffer.close();
             redactor.close();
-            
+            Desktop.getDesktop().open(archivoPila);
         } catch (IOException ex) {
             Logger.getLogger(GraficaPila.class.getName()).log(Level.SEVERE, null, ex);
         }

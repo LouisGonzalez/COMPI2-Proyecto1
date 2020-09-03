@@ -23,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import pollitos.DatosGuardado;
 import pollitos.Lenguajes;
 import pollitos.MisExpresiones;
 
@@ -32,14 +33,14 @@ import pollitos.MisExpresiones;
  */
 public class NuevaHoja {
     
-    public void crearHoja(File archivo, FileReader reader, BufferedReader buffer, String texto, JTabbedPane principal, Lenguajes elegido){
+    public void crearHoja(File archivo, FileReader reader, BufferedReader buffer, String texto, JTabbedPane principal, Lenguajes elegido, ArrayList<DatosGuardado> textosPanel){
         try {
             reader = new FileReader(archivo.toString());
             buffer = new BufferedReader(reader);
             while(buffer.ready()){
                 texto += buffer.readLine() + "\n";
             }
-            abrirPanel(texto, archivo.getPath(), archivo.getName(), principal, elegido);
+            abrirPanel(texto, archivo.getPath(), archivo.getName(), principal, elegido, textosPanel);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(NuevaHoja.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -47,8 +48,8 @@ public class NuevaHoja {
         }
     }
     
-    public void abrirPanel(String texto, String path, String titulo, JTabbedPane principal, Lenguajes elegido){
-        PanelHojas panel = new PanelHojas(texto, path, elegido);
+    public void abrirPanel(String texto, String path, String titulo, JTabbedPane principal, Lenguajes elegido, ArrayList<DatosGuardado> textosPanel){
+        PanelHojas panel = new PanelHojas(texto, path, elegido, principal.getTabCount(), textosPanel);
         principal.addTab(titulo, panel);
         principal.setTabComponentAt(principal.getTabCount() - 1, crearCabecera(titulo, principal));
     }

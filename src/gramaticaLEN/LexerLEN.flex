@@ -13,6 +13,7 @@ import java_cup.runtime.Symbol;
 Letra = [a-zA-Z]
 LetraMin = [a-z]
 LetraMay = [A-Z]
+GuionBajo = [_]
 Numero = [0123456789]
 Salto = \r|\n|\r\n
 Espacio1 = [ \t\f]
@@ -36,6 +37,7 @@ Espacio = {Salto} | {Espacio1}
     "version"                                                       {return symbol(sym.version);}
     "autor"                                                         {return symbol(sym.autor);}
     "lanzamiento"                                                   {return symbol(sym.lanzamiento);}
+    "_"                                                             {return symbol(sym.guion_bajo, new String(yytext()));}
     "extension"                                                     {return symbol(sym.extension);}
     "RESULT"                                                        {return symbol(sym.result);}
     ":"                                                             {return symbol(sym.dos_puntos, new String(yytext()));}
@@ -70,9 +72,9 @@ Espacio = {Salto} | {Espacio1}
     "cadena"                                                        {return symbol(sym.tipoCadena, new String(yytext()));}
     "id"                                                                {return symbol(sym.id);}
     {Numero}+                                                       {return symbol(sym.numero, new Integer(yytext()));}
-    ({LetraMin})({LetraMin}|{Numero})*                              {return symbol(sym.idMin, new String(yytext()));}
-    ({LetraMay})({LetraMay}|{Numero})*                              {return symbol(sym.idMay, new String(yytext()));} 
-    ({Letra})({Letra})*                                             {return symbol(sym.soloLetra, new String(yytext()));}
+    ({LetraMin}|{GuionBajo})({LetraMin}|{Numero}}|{GuionBajo})*                              {return symbol(sym.idMin, new String(yytext()));}
+    ({LetraMay}|{GuionBajo})({LetraMay}|{Numero}|{GuionBajo})*                              {return symbol(sym.idMay, new String(yytext()));} 
+    ({Letra}|{GuionBajo})({Letra}|{Numero}|{GuionBajo})*            {return symbol(sym.soloLetra, new String(yytext()));}
     {Espacio}+                                                      {}
 }   
     [^]                                                               {return symbol(sym.resto, new String(yytext()));}

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import pollitos.NodoAccion;
 import pollitos.NodoSimplificado;
 import pollitos.NodoTabla;
+import pollitos.Parejas;
 import pollitos.Simbolos;
 
 /**
@@ -43,15 +44,9 @@ public class OptimizacionLALR {
             }
             simplificados.add(posible);
         }
-        eliminacionNodos1(simplificados);
-        verificarNodosTabla(listCasos, tabla, simplificados, listSimbolos);
-        /*for (int i = 0; i < simplificados.size(); i++) {
-            String posibles = "";
-            for (int j = 0; j < simplificados.get(i).getListUniones().size(); j++) {
-                posibles += simplificados.get(i).getListUniones().get(j)+" ";
-            }
-            System.out.println("Posibles: "+posibles);
-        }*/
+          eliminacionNodos1(simplificados);
+         verificarNodosTabla(listCasos, tabla, simplificados, listSimbolos);
+        
     }
 
     //elimina cada nodo que tenga un estado dentro de su arraylist
@@ -62,11 +57,20 @@ public class OptimizacionLALR {
                 i--;
             }
         }
-        int mitad = simplificados.size() / 2;
-        for (int i = mitad; i < simplificados.size(); i++) {
-            simplificados.remove(i);
-            i--;
+
+        for (int i = 0; i < simplificados.size(); i++) {
+
+            for (int j = 0; j < simplificados.size(); j++) {
+                if (i != j) {
+                    if (simplificados.get(i).getListUniones().containsAll(simplificados.get(j).getListUniones()) && simplificados.get(j).getListUniones().containsAll(simplificados.get(i).getListUniones())) {
+                        simplificados.remove(j);
+                        j--;
+                    }
+                }
+            }
+
         }
+
     }
 
     //verifica si dentro de la tabla LR(1) no habria conflicto al simplificar dos o mas estados.
@@ -74,46 +78,59 @@ public class OptimizacionLALR {
         for (int i = 0; i < simplificados.size(); i++) {
             if (simplificados.get(i).getListUniones().size() > 2) {
                 for (int j = 1; j < simplificados.get(i).getListUniones().size(); j++) {
+                    ArrayList<Parejas> listParejas = new ArrayList<>();
                     if (tabla[simplificados.get(i).getListUniones().get(0)][0].isFilaActiva() && tabla[simplificados.get(i).getListUniones().get(j)][0].isFilaActiva()) {
-                        if (!comparacionFilas(i, tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(j), listSimbolos, listCasos, simplificados, true)) {
+                        Parejas pareja = new Parejas(simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(j));
+                        listParejas.add(pareja);
+                        if (!comparacionFilas(i, tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(j), listSimbolos, listCasos, simplificados, true, listParejas, true)) {
                             break;
                         }
                     }
                 }
             } else {
-                System.out.println("NUEVA ITERACION DDENTRO DEL CILCO------------------------------------------------------------------------");
+                ArrayList<Parejas> listParejas = new ArrayList<>();
                 if (tabla[simplificados.get(i).getListUniones().get(0)][0].isFilaActiva() && tabla[simplificados.get(i).getListUniones().get(1)][0].isFilaActiva()) {
-                    comparacionFilas(i, tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(1), listSimbolos, listCasos, simplificados, true);
+                    Parejas pareja = new Parejas(simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(1));
+                    listParejas.add(pareja);
+                    comparacionFilas(i, tabla, simplificados.get(i).getListUniones().get(0), simplificados.get(i).getListUniones().get(1), listSimbolos, listCasos, simplificados, true, listParejas, true);
                 }
             }
-
         }
     }
 
-    public boolean comparacionFilas(int nodoActual, NodoTabla[][] tabla, int idFila1, int idFila2, ArrayList<Simbolos> listSimbolos, ArrayList<NodoCaso> listCasos, ArrayList<NodoSimplificado> simplificados, boolean primero) {
+    public boolean comparacionFilas(int nodoActual, NodoTabla[][] tabla, int idFila1, int idFila2, ArrayList<Simbolos> listSimbolos, ArrayList<NodoCaso> listCasos, ArrayList<NodoSimplificado> simplificados, boolean primero, ArrayList<Parejas> listParejas, boolean padre) {
         boolean todoCorrecto = true;
-        System.out.println("NUEVO CICLO------------");
         for (int i = 1; i < listSimbolos.size() + 2; i++) {
             if (tabla[idFila1][i] != null && tabla[idFila2][i] != null) {
-
-                if (tabla[idFila1][i].getAcciones().size() == 1 && tabla[idFila2][i].getAcciones().size() == 1) {
-                    if (tabla[idFila1][i].getAcciones().get(0).getAccion().equals(tabla[idFila2][i].getAcciones().get(0).getAccion())) {
-                        if (tabla[idFila1][i].getAcciones().get(0).getNoCaso() != tabla[idFila2][i].getAcciones().get(0).getNoCaso()) {
-                            if ((idFila1 == tabla[idFila1][i].getAcciones().get(0).getNoCaso() && idFila2 == tabla[idFila2][i].getAcciones().get(0).getNoCaso()) || (idFila1 == tabla[idFila2][i].getAcciones().get(0).getNoCaso() && idFila2 == tabla[idFila1][i].getAcciones().get(0).getNoCaso())) {
-                            } else {
-                                if (verificarPosibleVinculo(nodoActual, simplificados, tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso(), primero)) {
-
-                                    if (!comparacionFilas(nodoActual, tabla, tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso(), listSimbolos, listCasos, simplificados, false)) {
-                                        todoCorrecto = false;
-                                        break;
+                if (tabla[idFila1][0].isFilaActiva() && tabla[idFila2][0].isFilaActiva()) {
+                    if (tabla[idFila1][i].getAcciones().size() == 1 && tabla[idFila2][i].getAcciones().size() == 1) {
+                        if (tabla[idFila1][i].getAcciones().get(0).getAccion().equals(tabla[idFila2][i].getAcciones().get(0).getAccion())) {
+                            if (tabla[idFila1][i].getAcciones().get(0).getNoCaso() != tabla[idFila2][i].getAcciones().get(0).getNoCaso()) {
+                               if (!tabla[idFila1][i].getAcciones().get(0).getAccion().equals("reduce")) {
+                                    if ((idFila1 == tabla[idFila1][i].getAcciones().get(0).getNoCaso() && idFila2 == tabla[idFila2][i].getAcciones().get(0).getNoCaso()) || (idFila1 == tabla[idFila2][i].getAcciones().get(0).getNoCaso() && idFila2 == tabla[idFila1][i].getAcciones().get(0).getNoCaso())) {
+                                    } else {
+                                        if (verificarPosibleVinculo(nodoActual, simplificados, tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso(), primero)) {
+                                            if (!verificarPasoDoble(tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso(), listParejas)) {
+                                                Parejas pareja = new Parejas(tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso());
+                                                listParejas.add(pareja);
+                                                if (!comparacionFilas(nodoActual, tabla, tabla[idFila1][i].getAcciones().get(0).getNoCaso(), tabla[idFila2][i].getAcciones().get(0).getNoCaso(), listSimbolos, listCasos, simplificados, false, listParejas, false)) {
+                                                    todoCorrecto = false;
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            todoCorrecto = false;
+                                            break;
+                                        }
                                     }
-                                } else {
-                                    System.out.println(nodoActual);
-                                    System.out.println("            NO ES CIERTO DONDE DDEBERDADD FALLO ES AQUI XED");
+                               } else {
                                     todoCorrecto = false;
                                     break;
                                 }
                             }
+                        } else {
+                            todoCorrecto = false;
+                            break;
                         }
                     } else {
                         todoCorrecto = false;
@@ -124,19 +141,19 @@ public class OptimizacionLALR {
                     break;
                 }
             }
-
         }
-        System.out.println(todoCorrecto + "   num1: " + idFila1 + "   num2: " + idFila2);
         if (todoCorrecto) {
-            if (idFila1 > idFila2) {
-                tabla[idFila1][0].setFilaActiva(false);
-                cambiarCasosTabla(tabla, idFila2, idFila1, listCasos, listSimbolos);
-                rellenoCasillas(tabla, idFila2, idFila1, listSimbolos);
-            } else {
-                tabla[idFila2][0].setFilaActiva(false);
-                cambiarCasosTabla(tabla, idFila1, idFila2, listCasos, listSimbolos);
-                rellenoCasillas(tabla, idFila1, idFila2, listSimbolos);
-            }
+                if (idFila1 > idFila2) {
+                    tabla[idFila1][0].setFilaActiva(false);
+                    cambiarCasosTabla(tabla, idFila2, idFila1, listCasos, listSimbolos);
+                    rellenoCasillas(tabla, idFila2, idFila1, listSimbolos);
+                } else {
+                    tabla[idFila2][0].setFilaActiva(false);
+                    cambiarCasosTabla(tabla, idFila1, idFila2, listCasos, listSimbolos);
+                    rellenoCasillas(tabla, idFila1, idFila2, listSimbolos);
+                }
+        } else {
+
         }
         return todoCorrecto;
     }
@@ -153,7 +170,7 @@ public class OptimizacionLALR {
                                 if (tabla[i][j].getAcciones().get(k).getNoCaso() == idACambiar) {
                                     tabla[i][j].getAcciones().get(k).setNoCaso(id);
                                 }
-                            } 
+                            }
                         }
                     }
 
@@ -213,5 +230,20 @@ public class OptimizacionLALR {
                 tabla[nodo1][i] = nuevo;
             }
         }
+    }
+
+    //verifica si ya se paso por un camino
+    public boolean verificarPasoDoble(int idFila1, int idFila2, ArrayList<Parejas> listParejas) {
+        boolean yaPaso = false;
+        for (int i = 0; i < listParejas.size(); i++) {
+            if (listParejas.get(i).getPareja1() == idFila1 && listParejas.get(i).getPareja2() == idFila2) {
+                yaPaso = true;
+                break;
+            } else if (listParejas.get(i).getPareja1() == idFila2 && listParejas.get(i).getPareja2() == idFila1) {
+                yaPaso = true;
+                break;
+            }
+        }
+        return yaPaso;
     }
 }

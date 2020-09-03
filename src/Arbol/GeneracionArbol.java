@@ -35,13 +35,13 @@ public class GeneracionArbol {
 
         recorrerArbol(nodoPrueba.getNodoArbol(), 0);
 
-        mostrarTablaSiguientes(nodoPrueba.getTablaSiguientes());
+    //    mostrarTablaSiguientes(nodoPrueba.getTablaSiguientes());
 
         estados.creacionEstados(nodoPrueba.getListEstados(), nodoPrueba.getTablaSiguientes(), nodoPrueba);
         
         estados.agregarPrimerConductor(nodoPrueba.getListEstados(), nodoPrueba.getTablaSiguientes());
         estados.agregarPrioridades(nodoPrueba.getListEstados(), nodoPrueba.getTablaSiguientes());
-        estados.mostrarEstados(nodoPrueba.getListEstados(), nodoPrueba.getTablaSiguientes());
+     //   estados.mostrarEstados(nodoPrueba.getListEstados(), nodoPrueba.getTablaSiguientes());
 
     }
 
@@ -97,7 +97,6 @@ public class GeneracionArbol {
                             }
                             break;
                         case '|':
-                            System.out.println("ENTRO A ESTA CONDICION MADERFAKERS");
                             if (!nodo.getNodo1().isNulabilidad() && !nodo.getNodo2().isNulabilidad()) {
                                 nodo.setNulabilidad(false);
                             } else {
@@ -105,7 +104,6 @@ public class GeneracionArbol {
                             }
                             break;
                         default:
-                            System.out.println("Ha ingresado un simbolo no valido");
                             break;
                     }
                 }
@@ -139,7 +137,6 @@ public class GeneracionArbol {
                                 }
                                 break;
                             default:
-                                System.out.println("HA INGRESADO UN SIMBOLO NO VALIDO");
                                 break;
                         }
                     }
@@ -342,10 +339,8 @@ public class GeneracionArbol {
 
     public void recorrerArbol(NodoArbol nodo, int valor) {
         if (valor == 0) {
-            System.out.println("El nodo padre de todos es: " + nodo.getTipo());
         }
         if (nodo.getNodo1() != null) {
-            System.out.println("El nodo derecho de " + nodo.getTipo() + " es: " + nodo.getNodo1().getTipo() + "  id: " + nodo.getNodo1().getNumero() + " nulabilidad: " + nodo.getNodo1().isNulabilidad()+" simbolo: "+nodo.getNodo1().getCaracteres());
             String primeros = "", siguientes = "";
             for (int i = 0; i < nodo.getNodo1().getPrimeros().size(); i++) {
                 primeros += nodo.getNodo1().getPrimeros().get(i).getNumero();
@@ -353,12 +348,9 @@ public class GeneracionArbol {
             for (int i = 0; i < nodo.getNodo1().getSiguientes().size(); i++) {
                 siguientes += nodo.getNodo1().getSiguientes().get(i).getNumero();
             }
-            System.out.println("                Sus primeros: " + primeros);
-            System.out.println("                Sus siguientes: " + siguientes);
             recorrerArbol(nodo.getNodo1(), 1);
         }
         if (nodo.getNodo2() != null) {
-            System.out.println("El nodo izquierdo de " + nodo.getTipo() + " es: " + nodo.getNodo2().getTipo() + " id: " + nodo.getNodo2().getNumero() + " nulabilidad: " + nodo.getNodo2().isNulabilidad()+" simbolo: "+nodo.getNodo2().getCaracteres());
             String primeros = "", siguientes = "";
             for (int i = 0; i < nodo.getNodo2().getPrimeros().size(); i++) {
                 primeros += nodo.getNodo2().getPrimeros().get(i).getNumero();
@@ -366,18 +358,13 @@ public class GeneracionArbol {
             for (int i = 0; i < nodo.getNodo2().getSiguientes().size(); i++) {
                 siguientes += nodo.getNodo2().getSiguientes().get(i).getNumero();
             }
-            System.out.println("                Sus primeros: " + primeros);
-            System.out.println("                Sus siguientes: " + siguientes);
             recorrerArbol(nodo.getNodo2(), 1);
         }
     }
 
     public void mostrarTablaSiguientes(ArrayList<NodoSiguiente> tablaSiguientes) {
         for (int i = 0; i < tablaSiguientes.size(); i++) {
-            System.out.println("No. " + tablaSiguientes.get(i).getNodo().getNumero());
-            System.out.println("                Sus siguientes:");
             for (int j = 0; j < tablaSiguientes.get(i).getListSiguientes().size(); j++) {
-                System.out.println("                " + tablaSiguientes.get(i).getListSiguientes().get(j).getNumero());
             }
         }
     }
@@ -459,7 +446,6 @@ public class GeneracionArbol {
         if(nodo.getNodo1() == null && nodo.getNodo2() == null){
             nodo.setIdExpresion(idExpresion);
             nodo.setPrioridad(prioridad);
-            System.out.println("AGREGADO EL ID: "+nodo.getIdExpresion()+"   CON PRIORIDAD DE NIVEL: "+nodo.getPrioridad());
         } else {
             if(nodo.getNodo1() != null){
                 nombrarNodos(nodo.getNodo1(), idExpresion, prioridad);

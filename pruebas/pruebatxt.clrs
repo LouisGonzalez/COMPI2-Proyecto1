@@ -1,0 +1,18 @@
+{  
+	COLORES:{
+		lienzo:{   
+			otrocolsfsdolor:{    
+				Red: 28,
+				Blue: 0,     
+				Green: 14    
+			}   
+		},   
+		lienzos:{    
+			miamarillo:{     
+				Red: 255,     
+				Blue: 12,     
+				Green: 75    
+			}   
+		} 
+	}
+}

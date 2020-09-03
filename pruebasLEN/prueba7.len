@@ -1,7 +1,7 @@
 nombre: c;
 autor: sun Microsystems;
 lanzamiento: 1996; /* Significa que cuando se encuentre este token deberá ser ignorado */
-extension: java;
+extension: c;
 
 
 %% 
@@ -9,6 +9,7 @@ extension: java;
 List<String> listString=new ArrayList<>();
 
 public static void prueba(){
+	String nombre = "sdf";
 	System.out.println("sasdfdasdfsdfsdfsdfsdddddddd");
 	
 }
@@ -39,17 +40,22 @@ llavea = "[";
 
 %% 
 
-terminal ida, numero, numreal, mas, por, parentesisa, parentesisb, llavea;
+terminal ida, numreal, llavea;
+terminal por;
+terminal mas;
+terminal parentesisa, parentesisb;
+terminal entero numero;
 
-no terminal S, E, T, F;
+no terminal cadena S;
+no terminal entero E, T, F;
 
 %%
 
-E :: E mas T;
-E :: T;
-T :: F por T;
-T :: F;
-F :: numero;
-F :: ida;
-F :: parentesisa E parentesisb;
+S :: E:a { System.out.println("El resultado es "+a); RESULT="El resultado es "+a; };
+E :: E:a mas T:b { RESULT=a+b; };
+E :: T:a { RESULT=a; }; 
+T :: F:a por T:b { RESULT=a*b; };
+T :: F:a { RESULT=a; };
+F :: numero:a { RESULT=a; };
+F :: parentesisa E:a parentesisb { RESULT=a; };
 %%

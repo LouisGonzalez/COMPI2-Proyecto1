@@ -48,14 +48,14 @@ public class Transiciones implements Serializable {
             if (iterador < textoTotal) {
                 String nuevoTexto = "";
                 for (int i = iterador; i < texto.length(); i++) {
-                    if (i == iterador) {
-                        if (texto.charAt(iterador) == ' ') {
+                  //  if (i == iterador) {
+                        if (texto.charAt(i) == ' ') {
                         } else {
                             nuevoTexto += texto.charAt(i);
                         }
-                    } else {
+                    /*} else {
                         nuevoTexto += texto.charAt(i);
-                    }
+                    }*/
                 }
                 transicionCadena(listTokens, estadoInicial, listEstados, nuevoTexto, tablaSiguientes);
             }
@@ -157,12 +157,10 @@ public class Transiciones implements Serializable {
             }
             Token miToken = new Token(token, null, cadena, null);
 
-            //    System.out.println("el token devuelto es un token: " + miToken.getIdentificador());
             listTokens.add(miToken);
         } else {
             Token miToken = new Token(aceptacion.getConductores().get(0).getId(), null, cadena, null);
             listTokens.add(miToken);
-            //   System.out.println("el token devuelto es un token: " + miToken.getIdentificador());
         }
     }
 

@@ -20,13 +20,11 @@ public class Tabla {
 
     public NodoTabla[][] creacionTabla(ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos) {
         NodoTabla[][] tabla = new NodoTabla[listCasos.size() + 2][listSimbolos.size() + 2];
-        System.out.println("TOTAL DE CASOS: " + listCasos.size() + " TOTAL DE ESTADOS: " + listSimbolos.size());
 
         rellenarFilaGuia(tabla, listSimbolos);
         rellenarColumnaGuia(tabla, listCasos);
         crearEstadoAceptacion(tabla, listCasos, listSimbolos);
         llenadoTabla(listCasos, tabla, listSimbolos);
-
         llenadoTablaReduces(listCasos, tabla, listSimbolos);
         //mostrarTabla(tabla, listCasos, listSimbolos);
         return tabla;
@@ -75,10 +73,8 @@ public class Tabla {
 
     public NodoTabla[][] llenadoTabla(ArrayList<NodoCaso> listCasos, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos) {
         for (int i = 0; i < listCasos.size(); i++) {
-            //System.out.println(listCasos.get(i).getIdCaso());
             for (int j = 0; j < listCasos.get(i).getListVinculos().size(); j++) {
-                //System.out.println("            "+listCasos.get(i).getListVinculos().get(j).getVinculo()+" "+listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo());
-                Integer columna = determinarColumna(listCasos.get(i).getListVinculos().get(j).getVinculo().toString(), tabla, listSimbolos);
+                  Integer columna = determinarColumna(listCasos.get(i).getListVinculos().get(j).getVinculo().toString(), tabla, listSimbolos);
                 if (determinarTipoSimbolo(listSimbolos, listCasos.get(i).getListVinculos().get(j).getVinculo().toString())) {
                     if (tabla[listCasos.get(i).getListVinculos().get(j).getIdCasoVinculo()][columna] == null) {
                         NodoTabla nuevo = new NodoTabla();
@@ -151,7 +147,6 @@ public class Tabla {
     public Integer determinarColumna(String id, NodoTabla[][] tabla, ArrayList<Simbolos> listSimbolos) {
         Integer columna = null;
         for (int i = 0; i < listSimbolos.size(); i++) {
-            System.out.println(tabla[0][i + 1].getSimbolo().getIdentificador() + "    " + id + "      PARA LOS REDUCES");
             if (tabla[0][i + 1].getSimbolo().getIdentificador().equals(id)) {
                 columna = i + 1;
                 break;
@@ -163,14 +158,12 @@ public class Tabla {
     public void mostrarTabla(NodoTabla[][] tabla, ArrayList<NodoCaso> listCasos, ArrayList<Simbolos> listSimbolos) {
         for (int i = 0; i < listCasos.size(); i++) {
             if (tabla[listCasos.get(i).getIdCaso()][0].isFilaActiva()) {
-                System.out.println("Caso no: " + listCasos.get(i).getIdCaso());
                 for (int j = 0; j < listSimbolos.size(); j++) {
                     if (tabla[i + 1][j + 1] != null && tabla[i + 1][j + 1] != null) {
                         String acciones = "";
                         for (int k = 0; k < tabla[i + 1][j + 1].getAcciones().size(); k++) {
                             acciones += "    " + tabla[i + 1][j + 1].getAcciones().get(k).getAccion() + "  " + tabla[i + 1][j + 1].getAcciones().get(k).getNoCaso() + " " + tabla[0][j + 1].getSimbolo().getIdentificador()+" |";
                         }
-                        System.out.println(acciones);
                     }
                 }
             }

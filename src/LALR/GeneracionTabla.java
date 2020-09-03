@@ -61,31 +61,9 @@ public class GeneracionTabla {
             listAux.add(listEstados.get(i));
         }
         int primerCaso = 1;
-        for (int i = 0; i < listAux.size(); i++) {
-            System.out.println(listAux.get(i).getNoEstado() + "           NO ESTADO PE    " + listAux.get(i).getIdentificador());
-            for (int j = 0; j < listAux.get(i).getMisExpresiones().size(); j++) {
-                //         System.out.println("                expresion: "+listAux.get(i).getMisExpresiones().get(j).getIdentificador());
-            }
-        }
+        
         listCasos.add(new NodoCaso(primerCaso, new ArrayList<>(), new ArrayList<>()));
         buscarNuevosCasos(listAux, listEstados, listCasos);
-        /*    for (int k = 0; k < listCasos.size(); k++) {
-
-        /*    for (int i = 0; i < listCasos.get(k).getListEstados().size(); i++) {
-                System.out.println("Estado: " + listCasos.get(k).getListEstados().get(i).getIdentificador());
-                System.out.println("        MIS EXPRESIONES");
-                for (int j = 0; j < listCasos.get(k).getListEstados().get(i).getMisExpresiones().size(); j++) {
-                    System.out.println("        " + listCasos.get(k).getListEstados().get(i).getMisExpresiones().get(j).getIdentificador());
-                }
-                System.out.println("                            MIS CARRILES:");
-                for (int j = 0; j < listCasos.get(k).getListEstados().get(i).getMisCarriles().size(); j++) {
-                    System.out.println("                             " + listCasos.get(k).getListEstados().get(i).getMisCarriles().get(j).getId());
-                }
-                System.out.println("---------------------------------------------------------------------------");
-            }
-            System.out.println("SIGUIENTEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE----------------------------------------------");
-        }*/
-
         for (int i = 0; i < listCasos.size(); i++) {
             String vinculos = "";
             for (int j = 0; j < listCasos.get(i).getListEstados().size(); j++) {
@@ -114,20 +92,15 @@ public class GeneracionTabla {
             if (!listCasos.get(i).isDerivado()) {
                 if (totalInicial == 1) {
                     cerradura(listAux, listEstados.get(listEstados.size() - 1).getIdentificador() + "I", listCasos, null, listCasos.get(i), null);
-                } else {
-                    //   cerradura(listAux, listCasos.get(i).getListEstados().get(0).getIdentificador(), listCasos, null, listCasos.get(i), null);
                 }
-                //    if (listCasos.get(i).getIdCaso() < 15) {
                 posiblesNuevosCasos(listCasos.get(i), listCasos, listAux);
                 listCasos.get(i).setDerivado(true);
-                //  }
-            }
+           }
         }
         int totalFinal = listCasos.size();
         if (totalFinal > totalInicial) {
             buscarNuevosCasos(listAux, listEstados, listCasos);
         }
-        //   posiblesNuevosCasos(listCasos.get(5), listCasos, listEstados);
     }
 
     public void cerradura(ArrayList<Estados> listOriginal, String id, ArrayList<NodoCaso> listCasos, Estados estadoPadre, NodoCaso casoActual, ArrayList<Expresiones> expAux) {
@@ -145,7 +118,7 @@ public class GeneracionTabla {
                             nuevo.getMisExpresiones().add(new Expresiones("lambda", true, null, null, null));
                             nuevo.getMisExpresiones().get(0).setPuntoFinal(true);
                             ArrayList<Expresiones> expresionAux = creacionExpresionAux(nuevo, 1);
-                            nuevo.setMisCarriles(agregarCarriles(listEstados, expresionAux, estadoPadre));
+                            nuevo.setMisCarriles(agregarCarriles(listEstados, expAux, estadoPadre));
                             if (!verificarEstados2(nuevo, casoActual)) {
                                 casoActual.getListEstados().add(nuevo);
                             } else {
@@ -160,7 +133,6 @@ public class GeneracionTabla {
                             if (!verificarEstados2(nuevo, casoActual)) {
                                 casoActual.getListEstados().add(nuevo);
                                 if (!nuevo.getMisExpresiones().get(nodo).getEsTerminal()) {
-                                    System.out.println(nuevo.getMisExpresiones().get(nodo).getIdentificador() + " NO ES TERMINAL, PROCEDO A DERIVAR");
                                     cerradura(listOriginal, nuevo.getMisExpresiones().get(nodo).getIdentificador(), listCasos, casoActual.getListEstados().get(casoActual.getListEstados().size() - 1), casoActual, expresionAux);
                                 }
                             } else {
@@ -180,9 +152,6 @@ public class GeneracionTabla {
                         } else {
                             break;
                         }
-                        /*if (!nuevo.getMisExpresiones().get(puntoUbicacion).getEsTerminal()) {
-                            cerradura(listOriginal, nuevo.getMisExpresiones().get(puntoUbicacion).getIdentificador(), listCasos, nuevo, casoActual);
-                        }*/
                     } else {
                         nuevo.getMisExpresiones().get(puntoUbicacion).setPunto(false);
                         nuevo.getMisExpresiones().get(puntoUbicacion + 1).setPunto(true);
@@ -198,26 +167,18 @@ public class GeneracionTabla {
                 }
             }
         }
-        //     if(casoActual.getIdCaso() != 7){
-
         verificarEstadosIguales3(casoActual.getListEstados());
-        //    }
     }
 
     //metodo para ver si dos producciones pueden ser operadas dentro de un mismo caso (Esto si el simbolo que se quiere derivar es el mismo en ambos)
     public void optimizarProducciones(ArrayList<Estados> listEstados, ArrayList<Estados> estadosCasoPadre, String expresion, Integer ubicacion, NodoCaso casoActual, ArrayList<NodoCaso> listCasos, int noCaso, int y) {
-
         ArrayList<Estados> listAux = new ArrayList<>();
         generarCopia(estadosCasoPadre, listAux);
         for (int i = 0; i < listAux.size(); i++) {
             if (i != y) {
                 Integer ubPosibleEstado = verUbicacionPunto(listAux.get(i).getMisExpresiones());
                 if (ubPosibleEstado != null && ubicacion != null) {
-                    System.out.println(ubPosibleEstado + "            " + ubicacion);
-                    //    if (ubPosibleEstado == ubicacion) {
                     String idPosibleEstado = listAux.get(i).getMisExpresiones().get(ubPosibleEstado).getIdentificador();
-                    //  System.out.println(idPosibleEstado + "            " + expresion);
-
                     if (expresion.equals(idPosibleEstado)) {
                         if (listAux.get(i).getMisExpresiones().get(ubPosibleEstado).getPunto() && estadosCasoPadre.get(y).getMisExpresiones().get(ubicacion).getPunto()) {
 
@@ -227,10 +188,6 @@ public class GeneracionTabla {
                                 nuevoIntegrante.getMisExpresiones().get(ubPosibleEstado).setPuntoFinal(true);
                                 casoActual.getListEstados().add(nuevoIntegrante);
 
-                                /* if (!estadosCasoPadre.get(i).getMisExpresiones().get(ubPosibleEstado).getEsTerminal()) {
-                                    String idDerivado = estadosCasoPadre.get(i).getMisExpresiones().get(ubPosibleEstado).getIdentificador();
-                                    cerradura(listEstados, idDerivado, listCasos, estadosCasoPadre.get(noCaso), casoActual);
-                                }*/
                             } else {
                                 nuevoIntegrante.getMisExpresiones().get(ubPosibleEstado).setPunto(false);
                                 nuevoIntegrante.getMisExpresiones().get(ubPosibleEstado + 1).setPunto(true);
@@ -238,15 +195,13 @@ public class GeneracionTabla {
 
                                 if (!listAux.get(i).getMisExpresiones().get(ubPosibleEstado + 1).getEsTerminal()) {
                                     String idDerivado = listAux.get(i).getMisExpresiones().get(ubPosibleEstado + 1).getIdentificador();
-                                    System.out.println("SE HA SIMPLIFICADO CON EXITOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-                                    cerradura(listEstados, idDerivado, listCasos, listAux.get(noCaso), casoActual, null);
+                                    cerradura(listEstados, idDerivado, listCasos, nuevoIntegrante, casoActual, null);
                                 }
                             }
                             estadosCasoPadre.get(i).setSimplificado(true);
                         }
                     }
                 }
-                //  }
             }
         }
 
@@ -254,10 +209,6 @@ public class GeneracionTabla {
 
     //metodo para comprobar si ya existe un caso con el cual poder vincularnos para no crear un caso nuevo
     public boolean comprobarSimplificacion(NodoCaso actual, ArrayList<NodoCaso> listCasos, Estados posibleEstado, ArrayList<Estados> listEstados, int y) {
-        //  NodoCaso aux = new NodoCaso(0, new ArrayList<>(), new ArrayList<>());
-        // aux.getListEstados().add(posibleEstado);
-        //Integer ubPunto = verUbicacionPunto(aux.getListEstados().get(0).getMisExpresiones());
-        //optimizarProducciones(listEstados, aux.getListEstados(), aux.getListEstados().get(0).getMisExpresiones().get(ubPunto).getIdentificador(), ubPunto, aux, listCasos, aux.getListEstados().get(0).getNoEstado(), y);
         boolean siExiste = false;
         ArrayList<Estados> aux = new ArrayList<>();
         Estados aux2 = posibleEstado;
@@ -269,20 +220,14 @@ public class GeneracionTabla {
         }
         if (aux.size() == 1) {
             for (int i = 0; i < listCasos.size(); i++) {
-                //  if (listCasos.get(i).getIdCaso() != actual.getIdCaso()) {
-                System.out.println(listCasos.get(i).getIdCaso() + "   " + listCasos.get(i).getListEstados().get(0).getNoEstado() + "   " + listCasos.get(i).getListEstados().get(0).getIdentificador() + "   /////////////////////////////////");
                 if (listCasos.get(i).getListEstados().get(0).getNoEstado() == posibleEstado.getNoEstado()) {
                     boolean vinculacion = comparacionSimbolos(posibleEstado, listCasos.get(i).getListEstados().get(0), listCasos.get(i).getIdCaso(), listCasos);
                     if (vinculacion) {
                         siExiste = true;
-                        System.out.println("LA VINCULACION ES REAL D:");
-                        System.out.println(listCasos.size());
-                        System.out.println(listCasos.get(i).getIdCaso());
                         posibleCaso = listCasos.get(i).getIdCaso();
                         break;
                     }
                 }
-                //}
             }
         } else {
             siExiste = buscarCoincidenciasMultiples(aux, listCasos);
@@ -329,7 +274,6 @@ public class GeneracionTabla {
                     encontrado2 = false;
                     break;
                 }
-
             }
             if (encontrado2) {
                 casoUnion = listCasos.get(i).getIdCaso();
@@ -361,35 +305,16 @@ public class GeneracionTabla {
         boolean mismaPosicion = false;
         Integer ubicacion1 = verUbicacionPunto(estado1.getMisExpresiones());
         Integer ubicacion2 = verUbicacionPunto(estado2.getMisExpresiones());
-        System.out.println(ubicacion1);
-        System.out.println(ubicacion2);
         if (ubicacion1 != null && ubicacion2 != null) {
-            //System.out.println("CUARTA FASE DE OPTIMIZACION VAS CON TODO PUTO AMO");
             int ub2 = ubicacion1 + 1;
             if (ubicacion2 == ub2) {
-                //  System.out.println("SI ENTRE AQUI SIGINFICA QUE TODO ESTA BIEN :D");
                 mismaPosicion = true;
             }
         } else {
-            //  System.out.println(estado1.getNoEstado() + "          no estado estado1");
-            // System.out.println(estado2.getNoEstado() + "          no estado estado2");
-            //System.out.println(estado1.getMisExpresiones().get(0).getIdentificador() + "          nombre estado1");
-            //System.out.println(estado2.getMisExpresiones().get(0).getIdentificador() + "          nombre estado1");
             Integer ubicacionPunto = verUbicacionPunto(estado1.getMisExpresiones());
-            //System.out.println(ubicacionPunto + "         ESTA ES LA UBICACION VERDADERA DEL PUNTO AL QUE SE QUIERE OPTIMIZAR");
-            //System.out.println(estado1.getMisExpresiones().size());
-            // System.out.println(estado1.getMisExpresiones().get(0).getPunto() + ":0");
-            //System.out.println(estado1.getMisExpresiones().get(estado1.getMisExpresiones().size()-1).getPuntoFinal());
-            //  System.out.println(estado2.getMisExpresiones().get(estado2.getMisExpresiones().size() - 1).getPuntoFinal());
-            /// System.out.println(idCaso + "         ID CASO QUE ESTOY REVISANDO");
-            ///System.out.println("punto final:            " + listCasos.get(4).getListEstados().get(0).getMisExpresiones().get(listCasos.get(4).getListEstados().get(0).getMisExpresiones().size() - 1).getPuntoFinal() + "      PUTNO FIANL");
-            ///System.out.println("idCasoooo:            " + listCasos.get(4).getIdCaso());
-
             if (estado1.getMisExpresiones().get(estado1.getMisExpresiones().size() - 1).getPunto() != null) {
                 if (estado1.getMisExpresiones().get(estado1.getMisExpresiones().size() - 1).getPunto() && estado2.getMisExpresiones().get(estado2.getMisExpresiones().size() - 1).getPuntoFinal()) {
-                    //    System.out.println("ENTRE A LA QUINTA FASE LOOOOOOOL");
                     mismaPosicion = true;
-                    //   System.out.println(mismaPosicion + "          ESTE ES EL VALOR POR EL CUAL NO DEBERIA AVER PROBLEMAS SIONO");
                 }
             }
         }
@@ -399,7 +324,6 @@ public class GeneracionTabla {
     //verifica que los simbolos del estado inicial de un caso sean iguales a los de otro caso para una posible vinculacion
     public boolean comparacionSimbolos(Estados estado1, Estados estado2, int idCaso, ArrayList<NodoCaso> listCasos) {
         if (estado1.getMisCarriles().size() == estado2.getMisCarriles().size()) {
-            //System.out.println("ENTRO A LA SEGUNDA FASE DE OPTIMIZAFCION SUPUTAMDRE CRAAAACK    ");
             boolean todoCorrecto = true;
             for (int i = 0; i < estado1.getMisCarriles().size(); i++) {
                 String ID1 = estado1.getMisCarriles().get(i).getId();
@@ -418,7 +342,6 @@ public class GeneracionTabla {
 
             }
             if (todoCorrecto) {
-                // System.out.println("ENTRE A LA TERCERA FASE DE OPTIMMIZCION ALP SOS UN GRANDE ");
                 if (!comparacionUbPuntos(estado1, estado2, idCaso, listCasos)) {
                     todoCorrecto = false;
                 }
@@ -431,7 +354,6 @@ public class GeneracionTabla {
 
     public boolean comparacionSimbolos2(Estados estado1, Estados estado2, ArrayList<NodoCaso> listCasos) {
         if (estado1.getMisCarriles().size() == estado2.getMisCarriles().size()) {
-            //System.out.println("ENTRO A LA SEGUNDA FASE DE OPTIMIZAFCION SUPUTAMDRE CRAAAACK    ");
             boolean todoCorrecto = true;
             for (int i = 0; i < estado1.getMisCarriles().size(); i++) {
                 String ID1 = estado1.getMisCarriles().get(i).getId();
@@ -455,9 +377,7 @@ public class GeneracionTabla {
         }
 
     }
-    //YA ENCONTRE EL PROBLEMA (TENGO QUE PASAR CADA PRODUCCION DE LOS ESTADOS DE CUENTA REGRESIVA A CUENTA NORMAL PARA QUE ASI NO HAYAN CONFUSIONES, ESTA ONDA SI FUNCIONA O BUENO ESO CREO YO ;'V  )
-    //metodo para crear nuevos casos provenientes de otro
-
+   
     public void posiblesNuevosCasos(NodoCaso actual, ArrayList<NodoCaso> listCasos, ArrayList<Estados> listEstados) {
         ArrayList<Estados> listAux = new ArrayList<>();
         generarCopia(actual.getListEstados(), listAux);
@@ -467,14 +387,11 @@ public class GeneracionTabla {
                     //aqui es donde deberia pasar el punto a una nueva posicion hacia la derecha
                     if (comprobarSimplificacion(actual, listCasos, listAux.get(i), listEstados, i)) {
                         //SI ENTRA AQUI SIGNIFICA QUE HAY UN CASO CON EL CUAL ES POSIBLE VINCULARSE EN LUGAR DE CREAR UNO NUEVO
-
                         Vinculos vinculo = new Vinculos();
                         Integer ubicacionPunto = verUbicacionPunto(listAux.get(i).getMisExpresiones());
                         vinculo.setIdCasoVinculo(actual.getIdCaso());
                         vinculo.setVinculo(listAux.get(i).getMisExpresiones().get(ubicacionPunto).getIdentificador());
                         listCasos.get(posibleCaso - 1).getListVinculos().add(vinculo);
-                        System.out.println("TOTAL DE ESsassaTADOS: " + actual.getListEstados().size() + " PARA EL CASO NO: " + actual.getIdCaso());
-                        System.out.println("ENTRO A AQUI A SIMPLIFICAR LA VIDA DE LAS PERSOANAS");
                     } else {
                         posibleCaso = null;
                         //Agrega el vinculo con el nuevo caso. 
@@ -484,25 +401,16 @@ public class GeneracionTabla {
                             Vinculos vinculo = new Vinculos();
                             if (ubicacionPunto == listAux.get(i).getMisExpresiones().size() - 1) {
                                 if (!nuevoIntegrante.getMisExpresiones().get(ubicacionPunto).getIdentificador().equals("$")) {
-                                    //         System.out.println("ENTROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
                                     listCasos.add(new NodoCaso(listCasos.get(listCasos.size() - 1).getIdCaso() + 1, new ArrayList<>(), new ArrayList<>()));
                                     vinculo.setIdCasoVinculo(actual.getIdCaso());
                                     vinculo.setVinculo(listAux.get(i).getMisExpresiones().get(ubicacionPunto).getIdentificador());
                                     listCasos.get(listCasos.size() - 1).getListVinculos().add(vinculo);
                                     nuevoIntegrante.getMisExpresiones().get(ubicacionPunto).setPunto(false);
                                     nuevoIntegrante.getMisExpresiones().get(ubicacionPunto).setPuntoFinal(true);
-
                                     listCasos.get(listCasos.size() - 1).getListEstados().add(nuevoIntegrante);
-
-                                    //       escribirDatosOriginales(listOriginal, listEstados);
                                     optimizarProducciones(listEstados, actual.getListEstados(), nuevoIntegrante.getMisExpresiones().get(ubicacionPunto).getIdentificador(), ubicacionPunto, listCasos.get(listCasos.size() - 1), listCasos, nuevoIntegrante.getNoEstado(), i);
                                 }
-                                /*     if (!nuevoIntegrante.getMisExpresiones().get(ubicacionPunto).isEsTerminal()) {
-                                    String nombre = nuevoIntegrante.getMisExpresiones().get(ubicacionPunto).getIdentificador();
-                                    cerradura(listEstados, nombre, listCasos, null, listCasos.get(listCasos.size() - 1));
-                                }*/
                             } else {
-                                //         System.out.println("ENTROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOx22222222222222222");
                                 listCasos.add(new NodoCaso(listCasos.get(listCasos.size() - 1).getIdCaso() + 1, new ArrayList<>(), new ArrayList<>()));
                                 vinculo.setIdCasoVinculo(actual.getIdCaso());
                                 vinculo.setVinculo(listAux.get(i).getMisExpresiones().get(ubicacionPunto).getIdentificador());
@@ -511,25 +419,13 @@ public class GeneracionTabla {
                                 nuevoIntegrante.getMisExpresiones().get(ubicacionPunto + 1).setPunto(true);
                                 listCasos.get(listCasos.size() - 1).getListEstados().add(nuevoIntegrante);
                                 optimizarProducciones(listEstados, actual.getListEstados(), nuevoIntegrante.getMisExpresiones().get(ubicacionPunto).getIdentificador(), ubicacionPunto, listCasos.get(listCasos.size() - 1), listCasos, nuevoIntegrante.getNoEstado(), i);
-
-                                //        escribirDatosOriginales(listOriginal, listEstados);
                                 if (!nuevoIntegrante.getMisExpresiones().get(ubicacionPunto + 1).isEsTerminal()) {
-
                                     if (nuevoIntegrante.getMisExpresiones().size() - 1 < ubicacionPunto + 2) {
                                         String nombre = nuevoIntegrante.getMisExpresiones().get(ubicacionPunto + 1).getIdentificador();
-                                        //aqui es donde debe ir la list aux?    ?
                                         cerradura(listEstados, nombre, listCasos, nuevoIntegrante, listCasos.get(listCasos.size() - 1), null);
-
                                     } else {
-
-                                        System.out.println("EN ALGUN MOMENTO LLEGO A ENTRAR AQUI -------------------------- SISISIISISISISISI " + actual.getIdCaso());
-                                        System.out.println(nuevoIntegrante.getMisExpresiones().size() + " &&    " + ubicacionPunto);
                                         ArrayList<Expresiones> expresionAux = creacionExpresionAux(nuevoIntegrante, ubicacionPunto + 2);
-                                        for (int j = 0; j < expresionAux.size(); j++) {
-                                            System.out.println("LA EXPRESION ES LA SIGUIENTE " + expresionAux.get(j).getIdentificador() + "     SISISISISIISISISIS");
-                                        }
                                         String nombre = nuevoIntegrante.getMisExpresiones().get(ubicacionPunto + 1).getIdentificador();
-                                        //aqui es donde debe ir la list aux?    ?
                                         cerradura(listEstados, nombre, listCasos, nuevoIntegrante, listCasos.get(listCasos.size() - 1), expresionAux);
                                     }
 
@@ -562,7 +458,6 @@ public class GeneracionTabla {
                     if (ubPunto1 != null && ubPunto2 != null) {
                         if (ubPunto1 == ubPunto2) {
                             if (listEstados.get(j).getNoEstado() == noEstado) {
-                                System.out.println("SOMOS IGUALES PROCEDEMOS A SIMPLIGFICIAR: " + noEstado + "   " + i + " " + j + "    LOOOOOOOOOOOL");
                                 estadosIguales = noEstado;
                                 nodoGuia = i;
                                 encontrado = true;

@@ -53,7 +53,6 @@ public class FuncionesTabla {
                     }
                     if (noAccion != null) {
                         if (tabla[noFila][columna].getAcciones().get(noAccion).getAccion().equals("reduce")) {
-                            //                 System.out.println("REDUCE ");
                             if (!reduce(listTokens.get(i), miPila, listEstados, tabla[noFila][columna].getAcciones().get(0).getNoCaso(), tabla, listSimbolos, miCodigo)) {
                                 
                                 PanelHojas.totalErrores += "(ERROR SINTACTICO) token: "+listTokens.get(i).getIdentificador()+" con valor: "+listTokens.get(i).getIdentificador()+" insertado de forma incorrecta.\n";
@@ -62,7 +61,6 @@ public class FuncionesTabla {
                             }
                         } else if (tabla[noFila][columna].getAcciones().get(noAccion).getAccion().equals("goTo")) {
                         } else if (tabla[noFila][columna].getAcciones().get(noAccion).getAccion().equals("shift")) {
-                            //                  System.out.println("SHIFT");
                             if (!shift(listTokens.get(i), miPila, tabla[noFila][columna].getAcciones().get(0).getNoCaso())) {
                                 cadenaAceptada = false;
                                 break;
@@ -83,8 +81,10 @@ public class FuncionesTabla {
             }
         }
         if (!cadenaAceptada) {
+            PanelHojas.totalErrores += "Esta cadena no es valida para el lenguaje seleccionado.\n";
             System.out.println("Esta entrada no es valida para el lenguaje seleccionado.");
         } else {
+            PanelHojas.todoBien += "Esta cadena si es valida para el lenguaje seleccionado.\n";
             System.out.println("Esta cadena si es valida para el lenguaje seleccionado");
         }
     }
@@ -95,7 +95,6 @@ public class FuncionesTabla {
         noFila = casoTransicion;
         mostrarPila(miPila);
         grafica.tablaPila(miPila);
-        System.out.println("--------------------------------------------------------------------------");
         return true;
     }
 
@@ -108,7 +107,6 @@ public class FuncionesTabla {
             expresiones.add(new ExpresionesAux(analizado.getMisExpresiones().get(i).getIdentificador(), analizado.getMisExpresiones().get(i).getVarAsociada()));
         }
         if (desapilarReduce(miPila, listEstados, expresiones, listSimbolos)) {
-            //        System.out.println(miPila.size() +"   "+expresiones.size()+"                 FASFDSFSDFS");
             for (int i = (miPila.size() - expresiones.size()); i < miPila.size(); i++) {
                 miPila.remove(i);
                 i--;
@@ -120,20 +118,18 @@ public class FuncionesTabla {
         if (todoCorrecto) {
             //   mostrarPila(miPila);
             //  grafica.tablaPila(miPila);
-            System.out.println("--------------------------------------------------------------------------");
+            
             Token nuevo = new Token(analizado.getIdentificador(), null, null, analizado.getNoEstado());
-            System.out.println(variables);
-            System.out.println(analizado.getResult());
             String tipoDev = tipado.determinarTipo(analizado.getIdentificador(), listSimbolos);
-            System.out.println(tipoDev + "        SOY EL TIPO DE DEVOLUCION DE " + analizado.getIdentificador());
             if (tipoDev.equals("entero")) {
                 nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Integer", miCodigo, analizado.getCodigoAntesala()));
-
+                PanelHojas.todoBien += nuevo.getValor()+"\n";
             } else if (tipoDev.equals("cadena")) {
                 nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "String", miCodigo, analizado.getCodigoAntesala()));
-
+                PanelHojas.todoBien += nuevo.getValor()+"\n";
             } else if (tipoDev.equals("real")) {
                 nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "Double", miCodigo, analizado.getCodigoAntesala()));
+                PanelHojas.todoBien += nuevo.getValor()+"\n";
             } else if (tipoDev.equals("")) {
                 nuevo.setValor(codigo.devolverDatos(variables, analizado.getResult(), "varDevolver", "void", miCodigo, analizado.getCodigoAntesala()));
             }
@@ -157,7 +153,6 @@ public class FuncionesTabla {
                         miPila.add(nuevo2);
                         mostrarPila(miPila);
                         grafica.tablaPila(miPila);
-                        System.out.println("--------------------------------------------------------------------------");
                         if (!reingresoToken(actual, miPila, tabla, listSimbolos, listEstados, miCodigo)) {
                             todoCorrecto = false;
                         }
@@ -186,15 +181,12 @@ public class FuncionesTabla {
             }
             if (noAccion != null) {
                 if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("reduce")) {
-                    //   System.out.println("REDUCE2");
-                    //        System.out.println("fila: "+ultimoNodo+" columnax2: "+columna);
                     if (!reduce(actual, miPila, listEstados, tabla[ultimoNodo][columna].getAcciones().get(noAccion).getNoCaso(), tabla, listSimbolos, miCodigo)) {
                         todoCorrecto = false;
                     }
                 } else if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("goTo")) {
 
                 } else if (tabla[ultimoNodo][columna].getAcciones().get(noAccion).getAccion().equals("shift")) {
-                    // System.out.println("SHIFT2");
                     if (!shift(actual, miPila, tabla[ultimoNodo][columna].getAcciones().get(noAccion).getNoCaso())) {
                         todoCorrecto = false;
                     }
@@ -223,7 +215,7 @@ public class FuncionesTabla {
                         } else if (tipoVar.equals("real")) {
                             variables += "Double " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= " + miPila.get(i).getToken().getValor() + ";\n";
                         } else if (tipoVar.equals("cadena")) {
-                            variables += "String " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= " + miPila.get(i).getToken().getValor() + ";\n";
+                            variables += "String " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= \"" + miPila.get(i).getToken().getValor() + "\";\n";
                         } else if(tipoVar.equals("")){
                             variables += "Object " + expresiones.get(expresiones.size() - cont).getRepresentante() + "= " + miPila.get(i).getToken().getValor() + ";\n";
                         }
