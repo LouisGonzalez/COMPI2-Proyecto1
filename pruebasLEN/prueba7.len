@@ -9,7 +9,6 @@ extension: c;
 List<String> listString=new ArrayList<>();
 
 public static void prueba(){
-	String nombre = "sdf";
 	System.out.println("sasdfdasdfsdfsdfsdfsdddddddd");
 	
 }

@@ -3,37 +3,33 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Precedencia.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/NodoAccion.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/gramaticaLEN/LexerLEN.flex</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Tabla.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Automata/GeneracionEstados.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/interfaz/PanelHojas.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Automata/GeneracionEstados.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/MisExpresiones.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Modificaciones/ModificacionLEN.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/ExpresionesAux.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/seccion_2/RuntimeCompiler.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/GeneracionTabla.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Graficas/GraficaTabla.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Primeros.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/Lenguajes.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/CodigoJava.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Arbol/GeneracionArbol.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/Parejas.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Repositorio/Guardado.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Estados.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/Codigo.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Automata/Transiciones.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/NodoSimplificado.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/seccion_2/CreacionClases.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Graficas/GraficaPila.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/gramaticaLEN/SintaxLEN.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/DatosLenguaje.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/Repositorio/NuevoLenguaje.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/interfaz/ProblemasLenguaje.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/DatosGuardado.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/FuncionesTabla.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/interfaz/Inicio.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/OptimizacionLALR.java</file>
-            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/ArregloExpresiones.java</file>
+            <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/interfaz/GuardadoArchivos.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/LALR/Expresiones.java</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/gramaticaLEN/SintaxLEN.cup</file>
             <file>file:/home/luisitopapurey/Escritorio/Compiladores%202/Proyecto%201/src/pollitos/NodoTabla.java</file>
